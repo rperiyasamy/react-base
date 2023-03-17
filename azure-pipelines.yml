@@ -30,3 +30,4 @@ steps:
     runtimeStack: 'DOTNETCORE|3.1'
     startupCommand: 'npm start'
   displayName: 'Deploy to Azure App Service'
+  
