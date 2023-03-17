@@ -1,37 +1,32 @@
-# Azure Pipeline YAML script for deploying ReactJS app to Azure App Service on Windows
-
-# Define the trigger for the pipeline
 trigger:
 - main
 
-# Define the pool for the pipeline
 pool:
   vmImage: 'windows-latest'
 
-# Define the steps for the pipeline
+variables:
+  azureSubscription: 'Pay-As-You-Go'
+  resourceGroupName: 'scloud-poc'
+  appName: 'api-vbi-app'
+  nodeVersion: '14.x'
+
 steps:
 - task: NodeTool@0
   inputs:
-    versionSpec: '16.x'
+    versionSpec: '$(nodeVersion)'
   displayName: 'Install Node.js'
 
-- task: Npm@1
-  inputs:
-    command: 'install'
-    workingDir: '$(System.DefaultWorkingDirectory)'
-  displayName: 'Install dependencies'
-
-- task: Npm@1
-  inputs:
-    command: 'run'
-    workingDir: '$(System.DefaultWorkingDirectory)'
-    arguments: 'build'
-  displayName: 'Build ReactJS app'
+- script: |
+    npm install
+    npm run build
+  displayName: 'Install and Build App'
 
 - task: AzureWebApp@1
   inputs:
-    azureSubscription: 'e8300ce3-6cb0-4000-a609-30873c85390f'
-    appName: 'api-vbi-app'
+    azureSubscription: '$(azureSubscription)'
+    appType: 'webApp'
+    appName: '$(appName)'
     package: '$(System.DefaultWorkingDirectory)/build'
-    deploymentMethod: 'zipdeploy'
+    runtimeStack: 'DOTNETCORE|3.1'
+    startupCommand: 'npm start'
   displayName: 'Deploy to Azure App Service'
