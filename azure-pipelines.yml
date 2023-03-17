@@ -5,7 +5,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  azureSubscription: 'e8300ce3-6cb0-4000-a609-30873c85390f'
+  azureSubscription: '8a332603-e144-4f68-8023-4afd01270469'
   resourceGroupName: 'scloud-poc'
   appName: 'api-vbi-app'
   nodeVersion: '14.x'
@@ -30,4 +30,3 @@ steps:
     runtimeStack: 'DOTNETCORE|3.1'
     startupCommand: 'npm start'
   displayName: 'Deploy to Azure App Service'
-  
