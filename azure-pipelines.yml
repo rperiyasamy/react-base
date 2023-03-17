@@ -5,7 +5,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  azureSubscription: 'Pay-As-You-Go'
+  azureSubscription: 'e8300ce3-6cb0-4000-a609-30873c85390f'
   resourceGroupName: 'scloud-poc'
   appName: 'api-vbi-app'
   nodeVersion: '14.x'
