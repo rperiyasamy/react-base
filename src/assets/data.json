@@ -1,0 +1,1114 @@
+{
+    "facets": [
+      {
+        "displayName": "GICSIndustryGroup",
+        "facetName": "GICSIndustryGroup",
+        "tagName": "",
+        "facetItems": [
+          {
+            "value": "Technology Hardware & Equipment",
+            "count": 5
+          },
+          {
+            "value": "Software & Services",
+            "count": 4
+          },
+          {
+            "value": "Capital Goods",
+            "count": 3
+          },
+          {
+            "value": "Materials",
+            "count": 3
+          },
+          {
+            "value": "Not Collected",
+            "count": 3
+          },
+          {
+            "value": "Consumer Durables & Apparel",
+            "count": 2
+          },
+          {
+            "value": "Semiconductors & Semiconductor Equipment",
+            "count": 2
+          },
+          {
+            "value": "Utilities",
+            "count": 2
+          },
+          {
+            "value": "Automobiles & Components",
+            "count": 1
+          },
+          {
+            "value": "Consumer Services",
+            "count": 1
+          },
+          {
+            "value": "Diversified Financials",
+            "count": 1
+          },
+          {
+            "value": "Media & Entertainment",
+            "count": 1
+          },
+          {
+            "value": "Pharmaceuticals, Biotechnology & Life Sciences",
+            "count": 1
+          },
+          {
+            "value": "Real Estate",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "displayName": "StockExchange",
+        "facetName": "StockExchange",
+        "tagName": "",
+        "facetItems": [
+          {
+            "value": "Taipei Exchange",
+            "count": 4
+          },
+          {
+            "value": "NASDAQ",
+            "count": 3
+          },
+          {
+            "value": "Hong Kong Stock Exchange",
+            "count": 2
+          },
+          {
+            "value": "Korea Exchange",
+            "count": 2
+          },
+          {
+            "value": "New York Stock Exchange",
+            "count": 2
+          },
+          {
+            "value": "Not Collected",
+            "count": 2
+          },
+          {
+            "value": "Taiwan Stock Exchange",
+            "count": 2
+          },
+          {
+            "value": "US OTC",
+            "count": 2
+          },
+          {
+            "value": "ASX",
+            "count": 1
+          },
+          {
+            "value": "BX Swiss AG",
+            "count": 1
+          },
+          {
+            "value": "London Stock Exchange",
+            "count": 1
+          },
+          {
+            "value": "Milan Stock Exchange",
+            "count": 1
+          },
+          {
+            "value": "NASDAQ OMX Helsinki",
+            "count": 1
+          },
+          {
+            "value": "NASDAQ OMX Stockholm",
+            "count": 1
+          },
+          {
+            "value": "Pakistan Stock Exchange",
+            "count": 1
+          },
+          {
+            "value": "Philippine Stock Exchange",
+            "count": 1
+          },
+          {
+            "value": "Singapore Exchange",
+            "count": 1
+          },
+          {
+            "value": "Stock Exchange of Thailand",
+            "count": 1
+          },
+          {
+            "value": "Tokyo Stock Exchange",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "displayName": "MarketCapRange",
+        "facetName": "MarketCapRange",
+        "tagName": "",
+        "facetItems": [
+          {
+            "value": "0M - 500M",
+            "count": 23
+          },
+          {
+            "value": "1B - 10B",
+            "count": 5
+          },
+          {
+            "value": "500M - 1B",
+            "count": 2
+          }
+        ]
+      },
+      {
+        "displayName": "EliminateStatus",
+        "facetName": "EliminateStatus",
+        "tagName": "",
+        "facetItems": [
+          {
+            "value": "Pass",
+            "count": 29
+          },
+          {
+            "value": "Fail",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "displayName": "GICSSector",
+        "facetName": "GICSSector",
+        "tagName": "",
+        "facetItems": [
+          {
+            "value": "Information Technology",
+            "count": 11
+          },
+          {
+            "value": "Consumer Discretionary",
+            "count": 4
+          },
+          {
+            "value": "Industrials",
+            "count": 3
+          },
+          {
+            "value": "Materials",
+            "count": 3
+          },
+          {
+            "value": "Not Collected",
+            "count": 3
+          },
+          {
+            "value": "Utilities",
+            "count": 2
+          },
+          {
+            "value": "Communication Services",
+            "count": 1
+          },
+          {
+            "value": "Financials",
+            "count": 1
+          },
+          {
+            "value": "Health Care",
+            "count": 1
+          },
+          {
+            "value": "Real Estate",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "displayName": "GICSIndustry",
+        "facetName": "GICSIndustry",
+        "tagName": "",
+        "facetItems": [
+          {
+            "value": "Communications Equipment",
+            "count": 4
+          },
+          {
+            "value": "Not Collected",
+            "count": 3
+          },
+          {
+            "value": "Chemicals",
+            "count": 2
+          },
+          {
+            "value": "IT Services",
+            "count": 2
+          },
+          {
+            "value": "Machinery",
+            "count": 2
+          },
+          {
+            "value": "Semiconductors & Semiconductor Equipment",
+            "count": 2
+          },
+          {
+            "value": "Software",
+            "count": 2
+          },
+          {
+            "value": "Auto Components",
+            "count": 1
+          },
+          {
+            "value": "Biotechnology",
+            "count": 1
+          },
+          {
+            "value": "Capital Markets",
+            "count": 1
+          },
+          {
+            "value": "Electric Utilities",
+            "count": 1
+          },
+          {
+            "value": "Electronic Equipment, Instruments & Components",
+            "count": 1
+          },
+          {
+            "value": "Hotels, Restaurants & Leisure",
+            "count": 1
+          },
+          {
+            "value": "Household Durables",
+            "count": 1
+          },
+          {
+            "value": "Independent Power & Renewable Electricity Producers",
+            "count": 1
+          },
+          {
+            "value": "Interactive Media & Services",
+            "count": 1
+          },
+          {
+            "value": "Metals & Mining",
+            "count": 1
+          },
+          {
+            "value": "Real Estate Management & Development",
+            "count": 1
+          },
+          {
+            "value": "Textiles, Apparel & Luxury Goods",
+            "count": 1
+          },
+          {
+            "value": "Trading Companies & Distributors",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "displayName": "AlcoholIssues",
+        "facetName": "AlcoholIssues",
+        "tagName": "",
+        "facetItems": [
+          {
+            "value": "Alcohol Distribution",
+            "count": 1
+          }
+        ]
+      }
+    ],
+    "results": [
+      {
+        "score": 7.728983,
+        "highlights": null,
+        "document": {
+          "ISIN": "AU000000SEK6",
+          "Name": "Seek Limited",
+          "Ticker": "SEK",
+          "StockExchange": "ASX",
+          "GICSSector": "Communication Services",
+          "GICSIndustryGroup": "Media & Entertainment",
+          "GICSIndustry": "Interactive Media & Services",
+          "MarketCapRange": "1B - 10B",
+          "MarketCap": 5836700000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "SEEK Ltd. engages in the provision of online employment, educational, commercial and volunteer businesses. It operates through the following segments: SEEK Asia Pacific and Americas, SEEK Investments and Corporate Costs. The SEEK Asia Pacific and Americas segment comprises SEEK ANZ, SEEK Asia, Brasil Online, OCC and AP&A Other, and other businesses. The SEEK Investments segment consists Zhaopin, Online Education Services and Early Stage Ventures. The Corporate Costs segment includes costs incurred that are not directly attributable to AP&A. The company was founded by Paul Moss Bassat, Andrew Reuven Bassat and Matthew Myer Rockman on September 17, 1997 and is headquartered in Cremorne, Australia.",
+          "LastUpdated": "2023-03-07T10:19:21.789Z"
+        }
+      },
+      {
+        "score": 16.589397,
+        "highlights": null,
+        "document": {
+          "ISIN": "CH0011471569",
+          "Name": "AP Alternative Portfolio AG",
+          "Ticker": "APN",
+          "StockExchange": "BX Swiss AG",
+          "GICSSector": "Financials",
+          "GICSIndustryGroup": "Diversified Financials",
+          "GICSIndustry": "Capital Markets",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 42900000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "AP Alternative Portfolio AG operates as an investment company. It invests in hedge funds and private equity funds. The company was founded on October 12, 2000 and is headquartered in Zurich, Switzerland.",
+          "LastUpdated": "2023-03-07T10:24:30.319Z"
+        }
+      },
+      {
+        "score": 20.402815,
+        "highlights": null,
+        "document": {
+          "ISIN": "DK0030469903",
+          "Name": "AP Pension Livsforsikringsaktieselskab",
+          "Ticker": "Not Collected",
+          "StockExchange": "Not Collected",
+          "GICSSector": "Not Collected",
+          "GICSIndustryGroup": "Not Collected",
+          "GICSIndustry": "Not Collected",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 0,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "AP Pension Livsforsikring A/S (AP Pension) is the pension management subsidiary of Foreningen Ap Pension Fmba in Denmark.^Established in 1919, the firm is based in Copenhagen and specializes in occupational pension fund management for Danish companies. They also provide pension and insurance solutions to private individuals.",
+          "LastUpdated": "2023-03-07T10:27:15.435Z"
+        }
+      },
+      {
+        "score": 5.1496196,
+        "highlights": null,
+        "document": {
+          "ISIN": "FI0009900708",
+          "Name": "Plc Uutechnic Group Oyj",
+          "Ticker": "UUTEC",
+          "StockExchange": "NASDAQ OMX Helsinki",
+          "GICSSector": "Industrials",
+          "GICSIndustryGroup": "Capital Goods",
+          "GICSIndustry": "Machinery",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 35000000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Plc Uutechnic Group Oyj engages in the production processes of paper making technology and process machinery. Its products and services include uutechnic mixing technology which specializes in Mining, Hydrometallurgy, Fertilizer and Pulp & paper industries; stelzer mixing technology which specializes in agitator technology; japrotek vessels designs and manufactures tanks, pressure vessels, columns, reactors, heat exchangers, and large tanks assembled on-site; and AP-Tela operates a machine workshop which manufactures a long welded and machined axially symmetric parts. The company was founded in 1988 and is headquartered in Uusikaupunki, Finland.",
+          "LastUpdated": "2023-03-07T10:11:46.638Z"
+        }
+      },
+      {
+        "score": 7.7315555,
+        "highlights": null,
+        "document": {
+          "ISIN": "GB00B15Y0C52",
+          "Name": "AP Alternative Assets LP",
+          "Ticker": "APLVF",
+          "StockExchange": "US OTC",
+          "GICSSector": "Not Collected",
+          "GICSIndustryGroup": "Not Collected",
+          "GICSIndustry": "Not Collected",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 0,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Not Collected",
+          "LastUpdated": "2023-03-07T10:20:12.293Z"
+        }
+      },
+      {
+        "score": 10.626886,
+        "highlights": null,
+        "document": {
+          "ISIN": "IE00BNG2V304",
+          "Name": "Glantus Holdings Plc",
+          "Ticker": "GLAN",
+          "StockExchange": "London Stock Exchange",
+          "GICSSector": "Information Technology",
+          "GICSIndustryGroup": "Software & Services",
+          "GICSIndustry": "Software",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 3900000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Glantus Holdings Plc engages in the provision of accounts payable automation and analytics solutions. Its products include Active AP Discovery, Intelligent AP Automation and Advanced AP Analytics. The firm has two operating units, EMEA and the US, which provide sales, account management, project delivery, and customer support. The company was founded by Maurice Leonard Healy in 2014 and is headquartered in Dublin, Ireland.",
+          "LastUpdated": "2023-03-07T10:38:37.064Z"
+        }
+      },
+      {
+        "score": 9.191131,
+        "highlights": null,
+        "document": {
+          "ISIN": "IT0004016504",
+          "Name": "Antichi Pellettieri SpA",
+          "Ticker": "AP",
+          "StockExchange": "Milan Stock Exchange",
+          "GICSSector": "Consumer Discretionary",
+          "GICSIndustryGroup": "Consumer Durables & Apparel",
+          "GICSIndustry": "Textiles, Apparel & Luxury Goods",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 0,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Not Collected",
+          "LastUpdated": "2023-03-07T10:20:07.803Z"
+        }
+      },
+      {
+        "score": 13.40605,
+        "highlights": null,
+        "document": {
+          "ISIN": "JP3160620005",
+          "Name": "AP Holdings Co., Ltd.",
+          "Ticker": "3175",
+          "StockExchange": "Tokyo Stock Exchange",
+          "GICSSector": "Consumer Discretionary",
+          "GICSIndustryGroup": "Consumer Services",
+          "GICSIndustry": "Hotels, Restaurants & Leisure",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 62300000,
+          "EliminateStatus": "Fail",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [
+            "Alcohol Distribution"
+          ],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "AP Holdings Co., Ltd. engages in the operation of restaurants and food retailers. It operates through the Production and Distribution Business and Sales Business segments. The Production and Distribution Business segment handles the distribution of beverages, and production and processing of chicken meat. The Sales Business segment handles food services for stores. The company was founded on October 29, 2001 and is headquartered in Tokyo, Japan.",
+          "LastUpdated": "2023-03-07T10:25:03.632Z"
+        }
+      },
+      {
+        "score": 7.815455,
+        "highlights": null,
+        "document": {
+          "ISIN": "KR7013340005",
+          "Name": "AJS Co., Ltd.",
+          "Ticker": "013340",
+          "StockExchange": "Korea Exchange",
+          "GICSSector": "Industrials",
+          "GICSIndustryGroup": "Capital Goods",
+          "GICSIndustry": "Machinery",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 0,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "AJS Co., Ltd. engages in the production of pipe fittings. Its products include groove joints, butt-welding pipe fittings, AP joints, groove butterfly valves, flange, sanitary pipes, grooving machine and others. The company was founded on June 5, 1978 and is headquartered in Yeoju, South Korea.",
+          "LastUpdated": "2023-03-07T10:14:32.073Z"
+        }
+      },
+      {
+        "score": 17.093885,
+        "highlights": null,
+        "document": {
+          "ISIN": "KR7290120005",
+          "Name": "DAYOU AP Co., Ltd.",
+          "Ticker": "290120",
+          "StockExchange": "Korea Exchange",
+          "GICSSector": "Consumer Discretionary",
+          "GICSIndustryGroup": "Automobiles & Components",
+          "GICSIndustry": "Auto Components",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 53600000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Dayou AP Co., Ltd. is engaged in the manufacturing of automotive trailer. Its products include steering wheels. The company was founded on October 4, 2016 and is headquartered in Wanju-si, South Korea.",
+          "LastUpdated": "2023-03-07T10:33:44.167Z"
+        }
+      },
+      {
+        "score": 16.497538,
+        "highlights": null,
+        "document": {
+          "ISIN": "KYG040581061",
+          "Name": "AP Acquisition Corp.",
+          "Ticker": "APCA",
+          "StockExchange": "New York Stock Exchange",
+          "GICSSector": "Not Collected",
+          "GICSIndustryGroup": "Not Collected",
+          "GICSIndustry": "Not Collected",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 180800000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "AP Acquisition Corp. is a blank check company incorporated for the purpose of effecting a merger, share exchange, asset acquisition, share purchase, reorganization or similar business combination with one or more businesses. The company is headquartered in Hong Kong.",
+          "LastUpdated": "2023-03-07T10:39:56.362Z"
+        }
+      },
+      {
+        "score": 12.458124,
+        "highlights": null,
+        "document": {
+          "ISIN": "KYG0501C1006",
+          "Name": "AP Rentals Holdings Ltd.",
+          "Ticker": "1496",
+          "StockExchange": "Hong Kong Stock Exchange",
+          "GICSSector": "Industrials",
+          "GICSIndustryGroup": "Capital Goods",
+          "GICSIndustry": "Trading Companies & Distributors",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 17100000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "AP Rentals Holdings Ltd. is an investment holding company, which engages in the rental of equipment and provision of value-added rental services to customers. It operates through the Leasing and Trading segments. The Leasing segment refers to the leasing of machinery, repair and maintenance service, delivery service, and installation service. The Trading segment pertains to the sales of machinery and parts. The company was founded by Pong Sing Lau and Kit Mui Chan on June 11, 2015 and is headquartered in Hong Kong.",
+          "LastUpdated": "2023-03-07T10:27:57.076Z"
+        }
+      },
+      {
+        "score": 9.601303,
+        "highlights": null,
+        "document": {
+          "ISIN": "KYG9898L1023",
+          "Name": "Zioncom Holdings Ltd.",
+          "Ticker": "8287",
+          "StockExchange": "Hong Kong Stock Exchange",
+          "GICSSector": "Information Technology",
+          "GICSIndustryGroup": "Technology Hardware & Equipment",
+          "GICSIndustry": "Communications Equipment",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 5800000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Zioncom Holdings Ltd. is an investment holding company, which engages in the manufacture and sale of networking products and non-networking products. It includes wireless routers and adapter, portable AP, ceiling and in-wall AP, network sdapter, switch, portable power bank, and accessory. The company was founded by Byung Kwon Kim in 1999 and is headquartered in Hong Kong.",
+          "LastUpdated": "2023-03-07T10:30:16.858Z"
+        }
+      },
+      {
+        "score": 9.164801,
+        "highlights": null,
+        "document": {
+          "ISIN": "PHY0005M1090",
+          "Name": "Aboitiz Power Corp.",
+          "Ticker": "AP",
+          "StockExchange": "Philippine Stock Exchange",
+          "GICSSector": "Utilities",
+          "GICSIndustryGroup": "Utilities",
+          "GICSIndustry": "Independent Power & Renewable Electricity Producers",
+          "MarketCapRange": "1B - 10B",
+          "MarketCap": 4930500000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Aboitiz Power Corp. Is an investment holding company, which engages in the provision of power generation and distribution. It operates through the following segments: Power Generation, Power Distribution, and Parent Company and Others. The Power Generation segment handles the generation and supply of power to customers under power supply contracts, ancillary service procurement agreements, and trading. The Power Distribution segment deals with the distribution and sale of electricity to the end-users. The Parent Company and Other segment covers the operations of the company and electricity-related services of the group such as installation of electrical equipment. The company was founded on February 13, 1998 and is headquartered in Taguig City, Philippines.",
+          "LastUpdated": "2023-03-07T10:21:04.788Z"
+        }
+      },
+      {
+        "score": 6.8407197,
+        "highlights": null,
+        "document": {
+          "ISIN": "PK0078901011",
+          "Name": "Ittehad Chemicals Ltd.",
+          "Ticker": "ICL",
+          "StockExchange": "Pakistan Stock Exchange",
+          "GICSSector": "Materials",
+          "GICSIndustryGroup": "Materials",
+          "GICSIndustry": "Chemicals",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 13100000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Ittehad Chemicals Ltd. engages in the manufacture of industrial chemicals. The firm manufactures, imports, exports, packs, repacks caustic soda, sodium hypochlorite, and allied chemicals. It also offers liquid chlorine, Barite AP standard, zinc sulphate, and calcium chloride. The company was founded in 1962 and is headquartered in Lahore, Pakistan.",
+          "LastUpdated": "2023-03-07T10:21:46.269Z"
+        }
+      },
+      {
+        "score": 6.8521895,
+        "highlights": null,
+        "document": {
+          "ISIN": "SE0016830517",
+          "Name": "Pagero Group AB",
+          "Ticker": "PAGERO",
+          "StockExchange": "NASDAQ OMX Stockholm",
+          "GICSSector": "Information Technology",
+          "GICSIndustryGroup": "Software & Services",
+          "GICSIndustry": "Software",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 213600000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Pagero Group AB engages in the provision of digital business messaging services. It operates through the following segments: Licence Sales. Transaction Sales, and Service Sales. It offers e-procurement, AP application, electronic banking, and transport management for buyers. Its solutions for suppliers include sales order and accounts receivable automation. The company was founded in 2009 and is headquartered in Gothenburg, Sweden.",
+          "LastUpdated": "2023-03-07T10:38:19.861Z"
+        }
+      },
+      {
+        "score": 13.10208,
+        "highlights": null,
+        "document": {
+          "ISIN": "SG1K10892752",
+          "Name": "AP Oil International Limited",
+          "Ticker": "5AU",
+          "StockExchange": "Singapore Exchange",
+          "GICSSector": "Materials",
+          "GICSIndustryGroup": "Materials",
+          "GICSIndustry": "Chemicals",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 20100000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "AP Oil International Ltd. is an investment holding company, which engages in the manufacture and sale of lubricating oils and fluids for industrial, automotive, and marine applications. It operates through the following segments: Manufacturing, Trading, and Franchising. The Manufacturing segment produces a range of lubricating oil and specialty chemicals for industrial, automotive, and marine applications, as well as the provision of oil blending services. The Trading segment focuses on the trades in base oil, additives, and specialty chemicals. The Franchising segment includes the trade in raw materials for products. The company was founded by Woon Chan Lau on December 24, 1975 and is headquartered in Singapore.",
+          "LastUpdated": "2023-03-07T10:15:09.981Z"
+        }
+      },
+      {
+        "score": 20.78189,
+        "highlights": null,
+        "document": {
+          "ISIN": "TH0308010Y08",
+          "Name": "AP (Thailand) Public Co. Ltd.",
+          "Ticker": "AP",
+          "StockExchange": "Stock Exchange of Thailand",
+          "GICSSector": "Real Estate",
+          "GICSIndustryGroup": "Real Estate",
+          "GICSIndustry": "Real Estate Management & Development",
+          "MarketCapRange": "1B - 10B",
+          "MarketCap": 1122100000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "AP (Thailand) Public Co., Ltd. engages in the development of real estate. It offers a wide range of residential properties for sale including townhouses, detached houses, semi detached house and condominiums. It operates through the following segments: Low-Rise, High-Rise, and Other. The Low-Rise segment focuses in the development of real estate which comprises single detached house and townhouse. The High-Rise segment involves in the development of real estate which comprises of condominium. The Other segment comprises after sales services, property brokerage, education and training businesses, and construction services provided to group of companies and other services. The company was founded in 1991 and is headquartered in Bangkok, Thailand.",
+          "LastUpdated": "2023-03-07T10:12:01.83Z"
+        }
+      },
+      {
+        "score": 16.497538,
+        "highlights": null,
+        "document": {
+          "ISIN": "TW0003224002",
+          "Name": "MetaTech (AP), Inc.",
+          "Ticker": "3224",
+          "StockExchange": "Taipei Exchange",
+          "GICSSector": "Information Technology",
+          "GICSIndustryGroup": "Technology Hardware & Equipment",
+          "GICSIndustry": "Electronic Equipment, Instruments & Components",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 105800000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "MetaTech (AP) Inc. engages in the distribution of semiconductor components, modules, and electronic materials. It operates through the following segments: Electronics, Biomedicine, and Others. The company was founded on September 17, 1998 and is headquartered in New Taipei, Taiwan.",
+          "LastUpdated": "2023-03-07T10:20:34.723Z"
+        }
+      },
+      {
+        "score": 6.0152392,
+        "highlights": null,
+        "document": {
+          "ISIN": "TW0003558003",
+          "Name": "Senao Networks, Inc.",
+          "Ticker": "3558",
+          "StockExchange": "Taipei Exchange",
+          "GICSSector": "Information Technology",
+          "GICSIndustryGroup": "Technology Hardware & Equipment",
+          "GICSIndustry": "Communications Equipment",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 474900000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Senao Networks, Inc. engages in the development and manufacturing of communications and networking technologies. It provides products and services for telecom, wireless local area network, and voice over Internet protocol solutions. The company supplies SOHO and enterprise class communications equipment, long range cordless phone, mini PCI and outdoor & indoor AP/CB. It offers its products under the Senao and EnGenius brand names. The company was founded on October 12, 2006 and is headquartered in Taoyuan, Taiwan.",
+          "LastUpdated": "2023-03-07T10:21:43.657Z"
+        }
+      },
+      {
+        "score": 4.810014,
+        "highlights": null,
+        "document": {
+          "ISIN": "TW0006142003",
+          "Name": "Cameo Communications, Inc.",
+          "Ticker": "6142",
+          "StockExchange": "Taiwan Stock Exchange",
+          "GICSSector": "Information Technology",
+          "GICSIndustryGroup": "Technology Hardware & Equipment",
+          "GICSIndustry": "Communications Equipment",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 113100000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Cameo Communications, Inc. engages in the production, manufacture, processing, and sale of computer network communication equipment and communication products. Its products include Layer 2 Management Ethernet Switch, Wireless Client Adapter, Wireless LAN AP/Router, SOHO Router, Ethernet Switches, Media Converter, USB to Ethernet Converter, Web-Smart Switches & Ethernet NIC, Network card, Network hub, Network Router and Network residential gateway. The company's services include setting frequency controlled telecommunications equipment manufacturing industry and importers, and import and export of network system components. Cameo Communications was founded by Wu Fu Chen on March 11, 1991 and is headquartered in Taipei, Taiwan.",
+          "LastUpdated": "2023-03-07T10:19:15.063Z"
+        }
+      },
+      {
+        "score": 15.133446,
+        "highlights": null,
+        "document": {
+          "ISIN": "TW0006531007",
+          "Name": "AP Memory Technology Corp.",
+          "Ticker": "6531",
+          "StockExchange": "Taiwan Stock Exchange",
+          "GICSSector": "Information Technology",
+          "GICSIndustryGroup": "Semiconductors & Semiconductor Equipment",
+          "GICSIndustry": "Semiconductors & Semiconductor Equipment",
+          "MarketCapRange": "1B - 10B",
+          "MarketCap": 1490200000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "AP Memory Technology Corp. is engaged in the research, design, development, manufacture and sale of integrated circuit memory. It offers DRAM based memory products for mobile, wearable and LoT devices as well as mobile RAM KGD solutions to mobile communication processor SiP and non-volatile memory MCP. The company was founded on August 4, 2011 and is headquartered in Hsinchu, Taiwan.",
+          "LastUpdated": "2023-03-07T10:26:50.38Z"
+        }
+      },
+      {
+        "score": 5.045513,
+        "highlights": null,
+        "document": {
+          "ISIN": "TW0006679004",
+          "Name": "ZillTek Technology Corp.",
+          "Ticker": "6679",
+          "StockExchange": "Taipei Exchange",
+          "GICSSector": "Information Technology",
+          "GICSIndustryGroup": "Semiconductors & Semiconductor Equipment",
+          "GICSIndustry": "Semiconductors & Semiconductor Equipment",
+          "MarketCapRange": "500M - 1B",
+          "MarketCap": 500700000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "ZillTek Technology Corp. manufactures and designs analog and mixed-mode circuit. The company's products include Touch-Screen Controller IC, Power management IC, DC/DC converter, AC/DC converter, LED light, LED drivers, Charger protection IC, Operational amplifier, White LED driver & Mems Microphone and other related products. It products mainly used in consumer product application, such as Mobile, Data Communication (AP router, IAD & GPON), USB 3.0 application (pen driver, SSD & HDD), LCD TV/Monitor, STB, Surveillance (CCTV, IP CAM & baby monitor), Tablet PC, MID, PDA, DVD-Player, IA product, SmartPhone, Notebook, and so on. ZillTek Technology was founded on December 12, 2005 and is headquartered in Hsinchu, Taiwan.",
+          "LastUpdated": "2023-03-07T10:30:50.55Z"
+        }
+      },
+      {
+        "score": 11.185712,
+        "highlights": null,
+        "document": {
+          "ISIN": "TW0008176009",
+          "Name": "Z-Com, Inc. (Taiwan)",
+          "Ticker": "8176",
+          "StockExchange": "Taipei Exchange",
+          "GICSSector": "Information Technology",
+          "GICSIndustryGroup": "Technology Hardware & Equipment",
+          "GICSIndustry": "Communications Equipment",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 24500000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Z-Com, Inc. engages in the research, design, development and manufacture of wireless data solutions for broadband wireless internet access and mobile data application. Its products include wireless LAN controllers, indoor access point (AP), outdoor AP, AP controller, and Wi-Fi module. The company was founded on March 10, 1995 and is headquartered in Hsinchu, Taiwan.",
+          "LastUpdated": "2023-03-07T10:17:47.463Z"
+        }
+      },
+      {
+        "score": 7.4023547,
+        "highlights": null,
+        "document": {
+          "ISIN": "US00448Q2012",
+          "Name": "Achillion Pharmaceuticals, Inc.",
+          "Ticker": "ACHN",
+          "StockExchange": "NASDAQ",
+          "GICSSector": "Health Care",
+          "GICSIndustryGroup": "Pharmaceuticals, Biotechnology & Life Sciences",
+          "GICSIndustry": "Biotechnology",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 0,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Achillion Pharmaceuticals, Inc. engages in the discovery and development of small molecule drug therapies for immune system disorders. It offers its propriety platform of potent and specific complement factor D inhibitors for AP-mediated diseases. The company was founded on August 17, 1998 and is headquartered in New Haven, CT.",
+          "LastUpdated": "2023-03-07T10:20:04.227Z"
+        }
+      },
+      {
+        "score": 9.531144,
+        "highlights": null,
+        "document": {
+          "ISIN": "US0117642068",
+          "Name": "Alaska Power & Telephone Company",
+          "Ticker": "APTL",
+          "StockExchange": "US OTC",
+          "GICSSector": "Utilities",
+          "GICSIndustryGroup": "Utilities",
+          "GICSIndustry": "Electric Utilities",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 124000000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Alaska Power & Telephone Co. engages in the provision of energy and communication services. It operates through the following segments: Regulated Electric, Regulated Telecom, and Other Nonregulated. The Regulated Electric segment offers retail and wholesale electric service including both hydro electric and diesel generation facilities. The Regulated Telecom segment includes local telephone services. The Other Nonregulated segment covers the activities of AP&T Wireless, AP&T Long Distance, and engineering services. The company was founded in 1957 and is headquartered in Port Townsend, WA.",
+          "LastUpdated": "2023-03-07T10:00:33.428Z"
+        }
+      },
+      {
+        "score": 9.217488,
+        "highlights": null,
+        "document": {
+          "ISIN": "US0320371034",
+          "Name": "Ampco-Pittsburgh Corporation",
+          "Ticker": "AP",
+          "StockExchange": "New York Stock Exchange",
+          "GICSSector": "Materials",
+          "GICSIndustryGroup": "Materials",
+          "GICSIndustry": "Metals & Mining",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 56700000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Ampco-Pittsburgh Corp. is engaged in the manufacture and sale of custom designed engineering products. It operates through the Forged and Cast Engineered Products, and Air and Liquid Processing segments. The Forged and Cast Engineered Products segment produces forged hardened steel rolls, cast rolls and open-die forged products. Forged hardened steel rolls are used primarily in cold rolling mills by producers of steel, aluminum and other metals. The Air and Liquid Processing segment includes the Aerofin, Buffalo Air Handling, and Buffalo Pumps divisions. The company was founded in 1929 and is headquartered in Carnegie, PA.",
+          "LastUpdated": "2023-03-07T10:00:33.488Z"
+        }
+      },
+      {
+        "score": 7.3455667,
+        "highlights": null,
+        "document": {
+          "ISIN": "US05368X1028",
+          "Name": "AvidXchange Holdings, Inc.",
+          "Ticker": "AVDX",
+          "StockExchange": "NASDAQ",
+          "GICSSector": "Information Technology",
+          "GICSIndustryGroup": "Software & Services",
+          "GICSIndustry": "IT Services",
+          "MarketCapRange": "1B - 10B",
+          "MarketCap": 1991000000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "AvidXchange Holdings, Inc. engages in the provision of accounts payable (AP) automation software and payment solutions. Its cloud-based, software and payment platform digitizes and automates the AP workflows for middle market businesses and their suppliers. The firm provides solutions and services throughout North America spanning multiple industries including real estate, homeowners associations, construction, financial services, healthcare facilities, social services, education, and media. Its business roots back to the year 2000, when AvidXchange, Inc. was founded. The company was formed on January 27, 2021 as a holding company and is headquartered in Charlotte, NC.",
+          "LastUpdated": "2023-03-07T10:39:30.444Z"
+        }
+      },
+      {
+        "score": 6.1261954,
+        "highlights": null,
+        "document": {
+          "ISIN": "US76029L1008",
+          "Name": "Repay Holdings Corporation",
+          "Ticker": "RPAY",
+          "StockExchange": "NASDAQ",
+          "GICSSector": "Information Technology",
+          "GICSIndustryGroup": "Software & Services",
+          "GICSIndustry": "IT Services",
+          "MarketCapRange": "500M - 1B",
+          "MarketCap": 772700000,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Repay Holdings Corp. engages in the provision of integrated payment processing solutions to vertical markets that have specific and bespoke transactions. It offers payments, instant funding, active safe, AP automation, clearing and settlement, messaging management, STX mortgage transfer automation, virtual debit cards, and value-added services. The company was founded by John Morris and Shaler A. Alias in 2006 and is headquartered in Atlanta, GA.",
+          "LastUpdated": "2023-03-07T10:30:27.93Z"
+        }
+      },
+      {
+        "score": 7.4023547,
+        "highlights": null,
+        "document": {
+          "ISIN": "ZZZZ00154586",
+          "Name": "Airxcel, Inc.",
+          "Ticker": "Not Collected",
+          "StockExchange": "Not Collected",
+          "GICSSector": "Consumer Discretionary",
+          "GICSIndustryGroup": "Consumer Durables & Apparel",
+          "GICSIndustry": "Household Durables",
+          "MarketCapRange": "0M - 500M",
+          "MarketCap": 0,
+          "EliminateStatus": "Pass",
+          "AbortionIssues": [],
+          "AdultEntertainmentIssues": [],
+          "AlcoholIssues": [],
+          "CannabisIssues": [],
+          "GamblingIssues": [],
+          "PredatoryLendingIssues": [],
+          "SevereEthicsControversiesIssues": [],
+          "TobaccoIssues": [],
+          "Description": "Airxcel, Inc. designs and produces heating, ventilating, air conditioning, and appliance products. The firm distributes its products through the following brands: Coleman-Mach, Dicor, Maxxair, MCD innovations, Suburban, Marvair, Ice, Eubank, and Suburban AP. The company was founded in 1991 and is headquartered in Wichita, KS.",
+          "LastUpdated": "2023-03-07T10:32:57.562Z"
+        }
+      }
+    ],
+    "count": 30
+  }
