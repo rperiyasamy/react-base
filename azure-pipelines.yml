@@ -23,10 +23,17 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/drop'
+    PathtoPublish: '$(Build.SourcesDirectory)/build'
     ArtifactName: 'drop'
     publishLocation: 'Container'
   displayName: 'Publish Artifact'
+
+# - task: PublishBuildArtifacts@1
+#   inputs:
+#     PathtoPublish: '$(Build.ArtifactStagingDirectory)/drop'
+#     ArtifactName: 'drop'
+#     publishLocation: 'Container'
+#   displayName: 'Publish Artifact'
 
 # - task: DownloadBuildArtifacts@0
 #   inputs:
