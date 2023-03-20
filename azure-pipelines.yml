@@ -5,9 +5,9 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  azureSubscription: '8a332603-e144-4f68-8023-4afd01270469'
-  resourceGroupName: 'scloud-poc'
-  appName: 'oa-reactapp-test'
+  # azureSubscription: '8a332603-e144-4f68-8023-4afd01270469'
+  # resourceGroupName: 'scloud-poc'
+  # appName: 'oa-reactapp-test'
   nodeVersion: '14.x'
 
 steps:
