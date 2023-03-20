@@ -21,9 +21,9 @@ steps:
     npm run build
   displayName: 'Install and Build App'
 
-- task: PublishBuildArtifacts@0
+- task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/drop'
     ArtifactName: 'drop'
     publishLocation: 'Container'
   displayName: 'Publish Artifact'
