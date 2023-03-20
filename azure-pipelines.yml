@@ -21,12 +21,27 @@ steps:
     npm run build
   displayName: 'Install and Build App'
 
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/build'
+    ArtifactName: 'react-app'
+    publishLocation: 'Container'
+  displayName: 'Publish Artifact'
+
+- task: DownloadBuildArtifacts@0
+  inputs:
+    buildType: 'current'
+    downloadType: 'single'
+    artifactName: 'react-app'
+    downloadPath: '$(System.ArtifactsDirectory)/react-app'
+  displayName: 'Download Artifact'
+
 - task: AzureWebApp@1
   inputs:
     azureSubscription: '$(azureSubscription)'
     appType: 'webApp'
     appName: '$(appName)'
-    package: '$(System.DefaultWorkingDirectory)/build'
+    package: '$(System.DefaultWorkingDirectory)/react-app/build'
     runtimeStack: 'DOTNETCORE|3.1'
     startupCommand: 'npm start'
   displayName: 'Deploy to Azure App Service'
