@@ -2,12 +2,12 @@ trigger:
 - main
 
 pool:
-  vmImage: 'default'
+  vmImage: 'windows-latest'
 
 variables:
   azureSubscription: '8a332603-e144-4f68-8023-4afd01270469'
   resourceGroupName: 'scloud-poc'
-  appName: 'oa-reactapp-test'
+  appName: 'api-vbi-app'
   nodeVersion: '14.x'
 
 steps:
