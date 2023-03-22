@@ -17,16 +17,19 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
-    npm install
-    npm run build
+    echo "Custom Variable from pipeline"
+    echo $(environment)
+    echo "-------------------------------"
+    # npm install
+    # npm run build
   displayName: 'Install and Build App'
 
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.SourcesDirectory)/build'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
-  displayName: 'Publish Artifact'
+# - task: PublishBuildArtifacts@1
+#   inputs:
+#     PathtoPublish: '$(Build.SourcesDirectory)/build'
+#     ArtifactName: 'drop'
+#     publishLocation: 'Container'
+#   displayName: 'Publish Artifact'
 
 # - task: PublishBuildArtifacts@1
 #   inputs:
