@@ -20,6 +20,8 @@ steps:
     echo "Custom Variable from pipeline"
     echo $(environment)
     echo "-------------------------------"
+    API_URL=$(grep -oP '(?<=API_URL=).+' .env)
+    sed -i "s/$API_URL/$(environment)/g" .env
     npm install
     npm run build
   displayName: 'Install and Build App'
