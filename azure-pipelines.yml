@@ -19,10 +19,6 @@ steps:
 - script: |
     echo "Custom Variable from pipeline"
     echo "-------------------------------"
-    # key="REACT_APP_DEV_APIBASEURI"
-    # value=$(api_base_url)
-    # echo $(key)
-    # echo $(value)
     sed -i "s|REACT_APP_DEV_APIBASEURI=.*|REACT_APP_DEV_APIBASEURI=$(api_base_url)|" .env
     echo $(grep "^REACT_APP_DEV_APIBASEURI=" .env | cut -d "=" -f 2)
     
