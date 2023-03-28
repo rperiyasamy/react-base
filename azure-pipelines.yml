@@ -18,12 +18,14 @@ steps:
 
 - script: |
     echo "Custom Variable from pipeline"
-    echo $(api_base_url)
     echo "-------------------------------"
     key="REACT_APP_DEV_APIBASEURI"
     value=$(api_base_url)
-    sed -i "s/$key=.*/$key=$value/" .env
+    echo $(key)
+    echo $(value)
+    sed -i "s/$(key)=.*/$(key)=$(value)/" .env
     echo $(grep "^$key=" .env | cut -d "=" -f 2)
+    
     # API_URL=$(grep -oP '(?<=REACT_APP_DEV_APIBASEURI=).+' .env)
     # sed -i "s/$API_URL/$(environment)/g" .env
     # npm install
