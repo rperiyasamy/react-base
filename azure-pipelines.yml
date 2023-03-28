@@ -18,20 +18,22 @@ steps:
 
 - script: |
     echo "Custom Variable from pipeline"
-    echo $(environment)
+    echo $(api_base_url)
     echo "-------------------------------"
-    API_URL=$(grep -oP '(?<=REACT_APP_DEV_APIBASEURI=).+' .env)
-    sed -i "s/$API_URL/$(environment)/g" .env
-    npm install
-    npm run build
+    sed -i "s/$key=.*/$key=$value/" .env
+    echo $(grep -oP '(?<=REACT_APP_DEV_APIBASEURI=).+' .env)
+    # API_URL=$(grep -oP '(?<=REACT_APP_DEV_APIBASEURI=).+' .env)
+    # sed -i "s/$API_URL/$(environment)/g" .env
+    # npm install
+    # npm run build
   displayName: 'Install and Build App'
 
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.SourcesDirectory)/build'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
-  displayName: 'Publish Artifact'
+# - task: PublishBuildArtifacts@1
+#   inputs:
+#     PathtoPublish: '$(Build.SourcesDirectory)/build'
+#     ArtifactName: 'drop'
+#     publishLocation: 'Container'
+#   displayName: 'Publish Artifact'
 
 # - task: PublishBuildArtifacts@1
 #   inputs:
