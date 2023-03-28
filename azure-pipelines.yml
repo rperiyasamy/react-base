@@ -23,8 +23,8 @@ steps:
     # value=$(api_base_url)
     # echo $(key)
     # echo $(value)
-    sed -i "s/"REACT_APP_DEV_APIBASEURI"=.*/"REACT_APP_DEV_APIBASEURI"=$(api_base_url)/" .env
-    echo $(grep "^'REACT_APP_DEV_APIBASEURI'=" .env | cut -d "=" -f 2)
+    sed -i "s/REACT_APP_DEV_APIBASEURI=.*/REACT_APP_DEV_APIBASEURI=$(api_base_url)/" .env
+    echo $(grep "^REACT_APP_DEV_APIBASEURI=" .env | cut -d "=" -f 2)
     
     # API_URL=$(grep -oP '(?<=REACT_APP_DEV_APIBASEURI=).+' .env)
     # sed -i "s/$API_URL/$(environment)/g" .env
