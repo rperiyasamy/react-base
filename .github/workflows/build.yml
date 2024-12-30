@@ -5,6 +5,16 @@ on:
     branches:
       - main
 
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: 'Environment'
+        required: true
+        default: 'dev'
+        options:
+          - dev
+          - QA
 
 jobs:
   build:
