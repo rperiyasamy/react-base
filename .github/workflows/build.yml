@@ -2,15 +2,6 @@ name: test
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        type: choice
-        description: 'Environment'
-        required: true
-        default: 'dev'
-        options:
-          - dev
-          - qa
 
 jobs:
   a:
@@ -20,7 +11,7 @@ jobs:
       - run: echo "A"
       - id: set
         run: |
-          echo "::set-output name=run_job_b::no"
+          echo "::set-output name=run_job_b::yes"
     outputs:
       run_job_b: ${{ steps.set.outputs.run_job_b }}  
   b:
@@ -30,7 +21,9 @@ jobs:
       - a
     if: needs.a.outputs.run_job_b == 'yes'
     steps:
-      - run: echo "B"  
+      - run: |
+        echo "B"  
+        exit 1
   c:
     name: c
     runs-on: ubuntu-latest
