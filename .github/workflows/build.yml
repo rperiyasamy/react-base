@@ -30,7 +30,9 @@ jobs:
       - a
     if: needs.a.outputs.run_job_b == 'yes'
     steps:
-      - run: echo "B"  
+      - run: |
+        echo "B"  
+        exit 1
   c:
     name: c
     runs-on: ubuntu-latest
