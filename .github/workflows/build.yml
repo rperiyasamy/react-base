@@ -32,7 +32,7 @@ jobs:
     steps:
       - run: |
           echo "B"  
-          exit 1
+          # exit 1
   c:
     name: c
     runs-on: ubuntu-latest
