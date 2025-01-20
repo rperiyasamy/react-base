@@ -2,6 +2,15 @@ name: test
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: 'Environment'
+        required: true
+        default: 'dev'
+        options:
+          - dev
+          - qa
 
 jobs:
   a:
