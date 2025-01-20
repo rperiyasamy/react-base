@@ -23,9 +23,9 @@ jobs:
           echo "::set-output name=run_job_b::yes"
     outputs:
       run_job_b: ${{ steps.set.outputs.run_job_b }}  
-  sonar:
-    name: sonar
-    uses: rperiyasamy/circleci-demo/.github/workflows/sample.yaml@main
+  # sonar:
+  #   name: sonar
+  #   uses: rperiyasamy/circleci-demo/.github/workflows/sample.yaml@main
   b:
     name: b
     runs-on: ubuntu-latest
