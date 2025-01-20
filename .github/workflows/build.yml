@@ -25,6 +25,8 @@ jobs:
       run_job_b: ${{ steps.set.outputs.run_job_b }}  
   sonar:
     uses: rperiyasamy/circleci-demo/.github/workflows/sample.yaml@main
+    with:
+      environment: 'dev'
   b:
     name: b
     runs-on: ubuntu-latest
