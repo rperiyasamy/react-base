@@ -27,6 +27,8 @@ jobs:
     uses: rperiyasamy/circleci-demo/.github/workflows/sample.yaml@main
     with:
       environment: 'dev'
+    env:
+      GITHUB_TOKEN: ${{ secrets.PAT }}
   b:
     name: b
     runs-on: ubuntu-latest
