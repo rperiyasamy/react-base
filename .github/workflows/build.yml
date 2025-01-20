@@ -2,6 +2,15 @@ name: test
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: 'Environment'
+        required: true
+        default: 'dev'
+        options:
+          - dev
+          - qa
 
 jobs:
   a:
@@ -27,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - a
-      - ${{ needs.a.outputs.run_job_b == 'yes' && 'b' }}
+      - ${{ github.event.inputs.environment != 'dev' || 'b' }}
     if: needs.b.result == 'success' || needs.b.result == 'skipped'
     steps:
       - run: echo "C"
