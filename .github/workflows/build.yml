@@ -13,8 +13,8 @@ on:
           - qa
 
 jobs:
-  setup-matrix:
-    uses: ./.github/workflows/set-matix.yml
+  prepare:
+    uses: ./.github/workflows/set-matrix.yml
     with:
       environment: ${{ github.event.inputs.environment }}
 
