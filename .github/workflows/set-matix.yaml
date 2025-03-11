@@ -1,0 +1,55 @@
+name: Set Deployment Matrix
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "Target environment (dev, qa, stg, prod, ndev)"
+        required: true
+        type: string
+    outputs:
+      matrix:
+        description: "The deployment matrix output"
+        value: ${{ jobs.prepare.outputs.matrix }}
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Generate image tag
+        run: |
+          echo "TIME=$(date +'%m-%d-%Y-t%H-%M')" >> $GITHUB_ENV
+          echo "SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Set Matrix
+        id: set-matrix
+        run: |
+          MATRIX=""
+          
+          if [[ "${{ github.event_name }}" == "release" && "${{ github.event.action }}" == "published" ]]; then
+            MATRIX="{\"include\":[{\"env\":\"stg\",\"image\":\"${{ github.event.release.tag_name }}\",\"build\":false}]}"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            case "${{ inputs.environment }}" in
+              dev|qa|stg|ndev|prod) 
+                MATRIX="{\"include\":[{\"env\":\"${{ inputs.environment }}\",\"image\":\"${{ env.SHA }}-${{ inputs.environment }}-${{ env.TIME }}\",\"build\":true}]}" ;;
+              *) 
+                MATRIX="{\"include\":[{\"env\":\"${{ inputs.environment }}\",\"image\":\"latest\"}]}";;
+            esac
+          else
+            case "${GITHUB_REF}" in
+              refs/heads/dev)  MATRIX="{\"include\":[{\"env\":\"dev\",\"image\":\"${{ env.SHA }}-dev-${{ env.TIME }}\",\"build\":true}]}" ;;
+              refs/heads/qa)   MATRIX="{\"include\":[{\"env\":\"qa\",\"image\":\"${{ env.SHA }}-qa-${{ env.TIME }}\",\"build\":true}]}" ;;
+              refs/heads/stg)  MATRIX="{\"include\":[{\"env\":\"stg\",\"image\":\"${{ env.SHA }}-stg-${{ env.TIME }}\",\"build\":true}]}" ;;
+              refs/heads/prod) MATRIX="{\"include\":[{\"env\":\"prod\",\"image\":\"${{ env.SHA }}-prod-${{ env.TIME }}\",\"build\":true}]}" ;;
+              refs/heads/ndev) MATRIX="{\"include\":[{\"env\":\"ndev\",\"image\":\"${{ steps.generate-sha.outputs.sha }}-ndev\",\"build\":false}]}" ;;
+            esac
+          fi
+
+          echo "matrix<<EOF" >> $GITHUB_OUTPUT
+          echo "$MATRIX" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Echo Matrix
+        run: echo "${{ steps.set-matrix.outputs.matrix }}"
