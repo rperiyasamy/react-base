@@ -17,6 +17,15 @@ jobs:
     uses: ./.github/workflows/set-matix.yml
     with:
       environment: ${{ github.event.inputs.environment }}
+
+  deploy:
+    needs: setup-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
+    steps:
+      - name: Deploy to ${{ matrix.env }}
+        run: echo "Deploying to ${{ matrix.env }} with image ${{ matrix.image }}"
       
   a:
     name: a
@@ -28,12 +37,12 @@ jobs:
           echo "::set-output name=run_job_b::yes"
     outputs:
       run_job_b: ${{ steps.set.outputs.run_job_b }}  
-  sonar:
-    uses: rperiyasamy/circleci-demo/.github/workflows/sample.yaml@main
-    with:
-      environment: 'dev'
-    env:
-      GITHUB_TOKEN: ${{ secrets.PAT }}
+  # sonar:
+  #   uses: rperiyasamy/circleci-demo/.github/workflows/sample.yaml@main
+  #   with:
+  #     environment: 'dev'
+  #   env:
+  #     GITHUB_TOKEN: ${{ secrets.PAT }}
   b:
     name: b
     runs-on: ubuntu-latest
