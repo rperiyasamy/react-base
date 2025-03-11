@@ -27,20 +27,26 @@ jobs:
         run: >
           {
            # deploy from dev branch to dev
-          echo "matrix<<EOF" 
           if [[ ${GITHUB_REF} == 'refs/heads/dev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
             echo "{\"include\":[{\"env\":\"dev\",\"image\":\"${{env.SHA}}-dev-${{env.TIME}}\",\"build\":true}]}"
           elif [[ ${GITHUB_REF} == 'refs/heads/qa' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
             echo "{\"include\":[{\"env\":\"qa\",\"image\":\"${{env.SHA}}-qa-${{env.TIME}}\",\"build\":true}]}"
           elif [[ ${GITHUB_REF} == 'refs/heads/stg' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
             echo "{\"include\":[{\"env\":\"stg\",\"image\":\"${{env.SHA}}-stg-${{env.TIME}}\",\"build\":true}]}"
           elif [[ ${GITHUB_REF} == 'refs/heads/prod' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
             echo "{\"include\":[{\"env\":\"prod\",\"image\":\"${{env.SHA}}-prod-${{env.TIME}}\",\"build\":true}]}"
           elif [[ ${GITHUB_REF} == 'refs/heads/ndev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
             echo "{\"include\":[{\"env\":\"ndev\",\"image\":\"${{ steps.generate-sha.outputs.sha }}-ndev\",\"build\":false}]}"
           elif [[ "${{ github.event_name }}" == "release" && "${{ github.event.action }}" == "published" ]]; then
+            echo "matrix<<EOF"
             echo "{\"include\":[{\"env\":\"stg\",\"image\":\"${{ github.event.release.tag_name }}\",\"build\":false}]}"
           elif [[ ${{ github.event_name }} == 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
             echo "{\"include\":["
               if [[ "${{ github.event.inputs.environment }}" == 'dev' ]]; then
                 echo "{\"env\":\"dev\",\"image\":\"${{env.SHA}}-dev-${{env.TIME}}\",\"build\":true},"
@@ -57,6 +63,7 @@ jobs:
               fi
             echo "]}"
           else
+            echo "matrix<<EOF"
             echo ""
           fi
 
