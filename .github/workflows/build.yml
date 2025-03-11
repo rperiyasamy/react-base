@@ -25,7 +25,9 @@ jobs:
       matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
     steps:
       - name: Deploy to ${{ matrix.env }}
-        run: echo "Deploying to ${{ matrix.env }} with image ${{ matrix.image }}"
+        run: | 
+          echo "Deploying to ${{ matrix.env }} with image ${{ matrix.image }}"
+          echo "${{matrix}}"
       
   a:
     name: a
