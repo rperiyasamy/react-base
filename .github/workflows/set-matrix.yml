@@ -22,34 +22,54 @@ jobs:
         run: |
           echo "TIME=$(date +'%m-%d-%Y-t%H-%M')" >> $GITHUB_ENV
           echo "SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
-
       - name: Set Matrix
         id: set-matrix
-        run: |
-          MATRIX=""
-          
-          if [[ "${{ github.event_name }}" == "release" && "${{ github.event.action }}" == "published" ]]; then
-            MATRIX="{\"include\":[{\"env\":\"stg\",\"image\":\"${{ github.event.release.tag_name }}\",\"build\":false}]}"
-          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            case "${{ inputs.environment }}" in
-              dev|qa|stg|ndev|prod) 
-                MATRIX="{\"include\":[{\"env\":\"${{ inputs.environment }}\",\"image\":\"${{ env.SHA }}-${{ inputs.environment }}-${{ env.TIME }}\",\"build\":true}]}" ;;
-              *) 
-                MATRIX="{\"include\":[{\"env\":\"${{ inputs.environment }}\",\"image\":\"latest\"}]}";;
-            esac
+        run: >
+          {
+           # deploy from dev branch to dev
+          if [[ ${GITHUB_REF} == 'refs/heads/dev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
+            echo "{\"include\":[{\"env\":\"dev\",\"image\":\"${{env.SHA}}-dev-${{env.TIME}}\",\"build\":true}]}"
+          elif [[ ${GITHUB_REF} == 'refs/heads/qa' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
+            echo "{\"include\":[{\"env\":\"qa\",\"image\":\"${{env.SHA}}-qa-${{env.TIME}}\",\"build\":true}]}"
+          elif [[ ${GITHUB_REF} == 'refs/heads/stg' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
+            echo "{\"include\":[{\"env\":\"stg\",\"image\":\"${{env.SHA}}-stg-${{env.TIME}}\",\"build\":true}]}"
+          elif [[ ${GITHUB_REF} == 'refs/heads/prod' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
+            echo "{\"include\":[{\"env\":\"prod\",\"image\":\"${{env.SHA}}-prod-${{env.TIME}}\",\"build\":true}]}"
+          elif [[ ${GITHUB_REF} == 'refs/heads/ndev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
+            echo "{\"include\":[{\"env\":\"ndev\",\"image\":\"${{ steps.generate-sha.outputs.sha }}-ndev\",\"build\":false}]}"
+          elif [[ "${{ github.event_name }}" == "release" && "${{ github.event.action }}" == "published" ]]; then
+            echo "matrix<<EOF"
+            echo "{\"include\":[{\"env\":\"stg\",\"image\":\"${{ github.event.release.tag_name }}\",\"build\":false}]}"
+          elif [[ ${{ github.event_name }} == 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
+            echo "{\"include\":["
+              if [[ "${{ github.event.inputs.environment }}" == 'dev' ]]; then
+                echo "{\"env\":\"dev\",\"image\":\"${{env.SHA}}-dev-${{env.TIME}}\",\"build\":true},"
+              elif [[ "${{ github.event.inputs.environment }}" == 'qa' ]]; then
+                echo "{\"env\":\"qa\",\"image\":\"${{env.SHA}}-qa-${{env.TIME}}\",\"build\":true},"
+              elif [[ "${{ github.event.inputs.environment }}" == 'stg' ]]; then
+                echo "{\"env\":\"stg\",\"image\":\"${{env.SHA}}-stg-${{env.TIME}}\",\"build\":true},"
+              elif [[ "${{ github.event.inputs.environment }}" == 'ndev' ]]; then
+                echo "{\"env\":\"ndev\",\"image\":\"${{env.SHA}}-ndev-${{env.TIME}}\",\"build\":true},"
+              elif [[ "${{ github.event.inputs.environment }}" == 'prod' ]]; then
+                echo "{\"env\":\"prod\",\"image\":\"${{env.SHA}}-prod-${{env.TIME}}\",\"build\":true},"
+              else
+                echo "{\"env\":\"${environment}\",\"image\":\"latest\"},"
+              fi
+            echo "]}"
           else
-            case "${GITHUB_REF}" in
-              refs/heads/dev)  MATRIX="{\"include\":[{\"env\":\"dev\",\"image\":\"${{ env.SHA }}-dev-${{ env.TIME }}\",\"build\":true}]}" ;;
-              refs/heads/qa)   MATRIX="{\"include\":[{\"env\":\"qa\",\"image\":\"${{ env.SHA }}-qa-${{ env.TIME }}\",\"build\":true}]}" ;;
-              refs/heads/stg)  MATRIX="{\"include\":[{\"env\":\"stg\",\"image\":\"${{ env.SHA }}-stg-${{ env.TIME }}\",\"build\":true}]}" ;;
-              refs/heads/prod) MATRIX="{\"include\":[{\"env\":\"prod\",\"image\":\"${{ env.SHA }}-prod-${{ env.TIME }}\",\"build\":true}]}" ;;
-              refs/heads/ndev) MATRIX="{\"include\":[{\"env\":\"ndev\",\"image\":\"${{ steps.generate-sha.outputs.sha }}-ndev\",\"build\":false}]}" ;;
-            esac
+            echo "matrix<<EOF"
+            echo ""
           fi
 
-          echo "matrix<<EOF" >> $GITHUB_OUTPUT
-          echo "$MATRIX" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo EOF
 
+          } >> $GITHUB_OUTPUT
       - name: Echo Matrix
-        run: echo "${{ steps.set-matrix.outputs.matrix }}"
+        run: |
+          echo "${{ steps.set-matrix.outputs.matrix }}"
