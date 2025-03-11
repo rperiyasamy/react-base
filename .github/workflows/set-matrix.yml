@@ -16,7 +16,7 @@ jobs:
   setup-matrix:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.setup-matrix.outputs.matrix }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Generate image tag
         run: |
@@ -72,4 +72,4 @@ jobs:
           } >> $GITHUB_OUTPUT
       - name: Echo Matrix
         run: |
-          echo "${{ steps.setup-matrix.outputs.matrix }}"
+          echo "${{ steps.set-matrix.outputs.matrix }}"
