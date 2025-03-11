@@ -27,7 +27,7 @@ jobs:
       - name: Deploy to ${{ matrix.env }}
         run: | 
           echo "Deploying to ${{ matrix.env }} with image ${{ matrix.image }}"
-          echo "${{matrix}}"
+          echo "Build: ${{matrix.build}}"
       
   a:
     name: a
