@@ -13,6 +13,11 @@ on:
           - qa
 
 jobs:
+  setup-matrix:
+    uses: .github/workflows/set-matrix.yml@main
+    with:
+      environment: ${{ github.event.inputs.environment }}
+      
   a:
     name: a
     runs-on: ubuntu-latest
