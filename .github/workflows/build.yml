@@ -14,7 +14,7 @@ on:
 
 jobs:
   setup-matrix:
-    uses: ./.github/workflows/set-matrix.yml
+    uses: ./.github/workflows/set-matrix.yaml
     with:
       environment: ${{ github.event.inputs.environment }}
       
