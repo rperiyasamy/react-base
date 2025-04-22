@@ -33,7 +33,9 @@ jobs:
 
       - run: sudo ip link set up dev wg0
 
-      - run: curl -vvv http://192.168.2.1
+      - run: sudo wg show
+
+      # - run: curl -vvv http://192.168.2.1
 
   # deploy:
   #   needs: prepare
