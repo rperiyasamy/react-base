@@ -42,7 +42,8 @@ jobs:
       - name: Check routing table
         run: |
           ip route show
-
+      - name: Test ping to RDS
+        run: ping -c 4 database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com
 
       - run: curl -vvv http://192.168.2.1
 
