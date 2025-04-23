@@ -45,9 +45,6 @@ jobs:
 
       - run: sudo iptables -L
           
-      - name: Test ping to RDS
-        run: ping -c 4 database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com
-
       - run: curl -vvv http://192.168.2.1
 
       - run: mysql -h database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com -u admin -p'AwP680O6Ojwo' -e "SELECT 1;"
