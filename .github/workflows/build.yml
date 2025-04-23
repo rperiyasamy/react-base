@@ -42,7 +42,7 @@ jobs:
           DB_HOST="database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com"
           DB_USER="admin"
           DB_PASS="AwP680O6Ojwo"
-          DB_NAME="your-database-name"
+          DB_NAME="mydb"
 
           mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME"
 
