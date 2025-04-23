@@ -38,22 +38,26 @@ jobs:
       - run: curl -vvv http://192.168.2.1
 
       - run: sudo apt install mysql-client-core-8.0
-      - name: connect to dbsudo apt install mysql-client-core-8.0
-        run: |
-          DB_HOST="database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com"
-          DB_USER="admin"
-          DB_PASS="AwP680O6Ojwo"
-          DB_NAME="mydb"
 
-          # mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME"
-          timeout 60s mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" -e "SELECT 1;" &> /dev/null
+      - run: mysql -h database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com -u admin -p'AwP680O6Ojwo' -e "SELECT 1;"
 
-          # Check exit status
-          if [ $? -eq 0 ]; then
-            echo "✅ Connected to MySQL database successfully."
-          else
-            echo "❌ Failed to connect to MySQL database."
-          fi
+
+      # - name: connect to dbsudo apt install mysql-client-core-8.0
+      #   run: |
+      #     DB_HOST="database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com"
+      #     DB_USER="admin"
+      #     DB_PASS="AwP680O6Ojwo"
+      #     DB_NAME="mydb"
+
+      #     # mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME"
+      #     timeout 60s mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" -e "SELECT 1;" &> /dev/null
+
+      #     # Check exit status
+      #     if [ $? -eq 0 ]; then
+      #       echo "✅ Connected to MySQL database successfully."
+      #     else
+      #       echo "❌ Failed to connect to MySQL database."
+      #     fi
 
   # deploy:
   #   needs: prepare
