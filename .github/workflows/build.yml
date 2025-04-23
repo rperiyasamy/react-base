@@ -37,7 +37,8 @@ jobs:
 
       - run: curl -vvv http://192.168.2.1
 
-      - name: connect to db
+      - run: sudo apt install mysql-client-core-8.0
+      - name: connect to dbsudo apt install mysql-client-core-8.0
         run: |
           DB_HOST="database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com"
           DB_USER="admin"
