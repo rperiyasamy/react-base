@@ -35,8 +35,13 @@ jobs:
 
       - run: sudo wg show
 
-      - run: curl -vvv http://192.168.2.1
+      # - run: curl -vvv http://192.168.2.1
 
+  sample:
+    needs: wireguard_example
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -vvv http://192.168.2.1
   # deploy:
   #   needs: prepare
   #   runs-on: ubuntu-latest
