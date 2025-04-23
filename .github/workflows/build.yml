@@ -43,8 +43,6 @@ jobs:
         run: |
           ip route show
 
-      - run: ip route get database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com
-
       - run: sudo iptables -L
           
       - name: Test ping to RDS
