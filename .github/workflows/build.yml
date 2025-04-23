@@ -37,6 +37,11 @@ jobs:
 
       - run: sudo wg show
 
+      - name: Check routing table
+        run: |
+          ip route show
+
+
       - run: curl -vvv http://192.168.2.1
 
       - run: mysql -h database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com -u admin -p'AwP680O6Ojwo' -e "SELECT 1;"
