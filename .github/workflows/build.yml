@@ -35,13 +35,17 @@ jobs:
 
       - run: sudo wg show
 
-      # - run: curl -vvv http://192.168.2.1
-
-  sample:
-    needs: wireguard_example
-    runs-on: ubuntu-latest
-    steps:
       - run: curl -vvv http://192.168.2.1
+
+      - name: connect to db
+        run: |
+          DB_HOST="database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com"
+          DB_USER="admin"
+          DB_PASS="AwP680O6Ojwo"
+          DB_NAME="your-database-name"
+
+          mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME"
+
   # deploy:
   #   needs: prepare
   #   runs-on: ubuntu-latest
