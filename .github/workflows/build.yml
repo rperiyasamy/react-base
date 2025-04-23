@@ -21,6 +21,8 @@ jobs:
   wireguard_example:
     runs-on: ubuntu-latest
     steps:
+      - run: sudo apt install mysql-client-core-8.0
+      
       - run: sudo apt install wireguard
 
       - run: echo "${{ secrets.WIREGUARD_PRIVATE_KEY }}" > privatekey
@@ -36,8 +38,6 @@ jobs:
       - run: sudo wg show
 
       - run: curl -vvv http://192.168.2.1
-
-      - run: sudo apt install mysql-client-core-8.0
 
       - run: mysql -h database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com -u admin -p'AwP680O6Ojwo' -e "SELECT 1;"
 
