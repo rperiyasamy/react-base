@@ -51,7 +51,7 @@ jobs:
 
       - run: sudo iptables -L
           
-      - run: curl -vvv http://192.168.2.1
+      # - run: curl -vvv http://192.168.2.1
 
       - run: mysql -h database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com -u admin -p'AwP680O6Ojwo' -e "SELECT 1;"
 
