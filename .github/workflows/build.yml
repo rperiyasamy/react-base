@@ -39,6 +39,35 @@ jobs:
           echo "AWS Util: ${{ github.event.inputs.awsutil }}"
           echo "Log: ${{ github.event.inputs.log }}"
           echo "Web client: ${{ github.event.inputs.webclient }}"
+          
+      - name: Collect selected layers into an array
+        id: collect_layers
+        run: |
+          layers=()
+      
+          if [ "${{ github.event.inputs.awsutil }}" == "true" ]; then
+            layers+=("awsutil")
+          fi
+          if [ "${{ github.event.inputs.log }}" == "true" ]; then
+            layers+=("log")
+          fi
+          if [ "${{ github.event.inputs.webclient }}" == "true" ]; then
+            layers+=("webclient")
+          fi
+      
+          echo "Selected layers: ${layers[@]}"
+      
+          # Export as comma-separated string
+          echo "layers_csv=$(IFS=','; echo "${layers[*]}")" >> "$GITHUB_OUTPUT"
+
+      - name: Loop over selected layers
+        run: |
+          IFS=',' read -ra LAYERS <<< "${{ steps.collect_layers.outputs.layers_csv }}"
+          for layer in "${LAYERS[@]}"; do
+            echo "Selected layer: $layer"
+          done
+
+
 
   # wireguard_example:
   #   runs-on: ubuntu-latest
