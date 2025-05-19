@@ -12,6 +12,19 @@ on:
           - dev
           - qa
 
+      option1:
+        type: boolean
+        description: "Description for option 1"
+        required: false
+      option2:
+        type: boolean
+        description: "Description for option 2"
+        required: false
+      option3:
+        type: boolean
+        description: "Description for option 3"
+        required: false
+
 jobs:
   # prepare:
   #   uses: ./.github/workflows/set-matrix.yml
