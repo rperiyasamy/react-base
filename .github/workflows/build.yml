@@ -11,11 +11,7 @@ on:
         options:
           - dev
           - qa
-      lambda_layer_section:
-        type: string
-        description: "Lambda Layer Options (select any)"
-        required: false
-        default: ""
+      
       awsutil:
         type: boolean
         description: "AWS Util Layer"
