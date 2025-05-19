@@ -12,17 +12,17 @@ on:
           - dev
           - qa
 
-      option1:
+      awsutil:
         type: boolean
-        description: "Description for option 1"
+        description: "AWS Util Layer"
         required: false
-      option2:
+      log:
         type: boolean
-        description: "Description for option 2"
+        description: "Log Layer"
         required: false
-      option3:
+      webclient:
         type: boolean
-        description: "Description for option 3"
+        description: "Web Client Layer"
         required: false
 
 jobs:
@@ -31,59 +31,68 @@ jobs:
   #   with:
   #     environment: ${{ github.event.inputs.environment }}
 
-  wireguard_example:
+  build:
     runs-on: ubuntu-latest
     steps:
-      # - run: sudo apt-get update && sudo apt-get install -y mysql-client
+      - name: Check selected options
+        run: |
+          echo "AWS Util: ${{ github.event.inputs.awsutil }}"
+          echo "Log: ${{ github.event.inputs.log }}"
+          echo "Web client: ${{ github.event.inputs.webclient }}"
+
+  # wireguard_example:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     # - run: sudo apt-get update && sudo apt-get install -y mysql-client
       
-      - run: sudo apt install wireguard
+  #     - run: sudo apt install wireguard
 
-      - run: echo "${{ secrets.WIREGUARD_PRIVATE_KEY }}" > privatekey
+  #     - run: echo "${{ secrets.WIREGUARD_PRIVATE_KEY }}" > privatekey
 
-      - run: sudo ip link add dev wg0 type wireguard
+  #     - run: sudo ip link add dev wg0 type wireguard
 
-      - run: sudo ip address add dev wg0 192.168.2.2 peer 192.168.2.1
+  #     - run: sudo ip address add dev wg0 192.168.2.2 peer 192.168.2.1
 
-      - run: sudo wg set wg0 listen-port 48123 private-key privatekey peer zMTflc85ypiteIyq+sDpCNej0DR6WgrlAVN7zCMqZUQ= allowed-ips 0.0.0.0/0 endpoint 13.59.139.144:43772
+  #     - run: sudo wg set wg0 listen-port 48123 private-key privatekey peer zMTflc85ypiteIyq+sDpCNej0DR6WgrlAVN7zCMqZUQ= allowed-ips 0.0.0.0/0 endpoint 13.59.139.144:43772
 
-      - run: sudo ip link set up dev wg0
+  #     - run: sudo ip link set up dev wg0
 
-      - run: sudo ip route add 172.31.0.0/16 via 192.168.2.1
+  #     - run: sudo ip route add 172.31.0.0/16 via 192.168.2.1
 
-      - run: sudo wg show
+  #     - run: sudo wg show
 
-      - name: Check routing table
-        run: |
-          ip route show
+  #     - name: Check routing table
+  #       run: |
+  #         ip route show
 
-      # - name: Add routes
-      #   run: |
-      #     sudo ip route add 172.31.64.0/20 via 192.168.2.1
-      #     sudo ip route add 172.31.80.0/20 via 192.168.2.1
+  #     # - name: Add routes
+  #     #   run: |
+  #     #     sudo ip route add 172.31.64.0/20 via 192.168.2.1
+  #     #     sudo ip route add 172.31.80.0/20 via 192.168.2.1
 
 
-      - run: sudo iptables -L
+  #     - run: sudo iptables -L
           
-      # - run: curl -vvv http://192.168.2.1
+  #     # - run: curl -vvv http://192.168.2.1
 
-      - run: mysql -h database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com -u admin -p'AwP680O6Ojwo' -e "SELECT 1;"
+  #     - run: mysql -h database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com -u admin -p'AwP680O6Ojwo' -e "SELECT 1;"
 
-  setup-vpn:
-    uses: ./.github/workflows/wireguard.yml
-    with:
-      ec2_public_ip: "13.59.139.144"
-      ec2_wg_public_key: "zMTflc85ypiteIyq+sDpCNej0DR6WgrlAVN7zCMqZUQ="
-    secrets:
-      wireguard_private_key: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
+  # setup-vpn:
+  #   uses: ./.github/workflows/wireguard.yml
+  #   with:
+  #     ec2_public_ip: "13.59.139.144"
+  #     ec2_wg_public_key: "zMTflc85ypiteIyq+sDpCNej0DR6WgrlAVN7zCMqZUQ="
+  #   secrets:
+  #     wireguard_private_key: ${{ secrets.WIREGUARD_PRIVATE_KEY }}
 
-  post-setup:
-    needs: setup-vpn
-    runs-on: ubuntu-latest
-    steps:
-      - name: Test MySQL connection over VPN
-        run: |
-          sudo apt-get update && sudo apt-get install -y mysql-client
-          mysql -h database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com -u admin -p'AwP680O6Ojwo' -e "SELECT 1;"
+  # post-setup:
+  #   needs: setup-vpn
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Test MySQL connection over VPN
+  #       run: |
+  #         sudo apt-get update && sudo apt-get install -y mysql-client
+  #         mysql -h database-1.cgtultbvny9h.us-east-2.rds.amazonaws.com -u admin -p'AwP680O6Ojwo' -e "SELECT 1;"
 
 
       # - name: connect to dbsudo apt install mysql-client-core-8.0
