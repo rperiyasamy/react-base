@@ -37,6 +37,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Schedule Check 
+        if: github.event.schedule
+        run: |
+          echo "Tan through scheduler"
       - name: Check selected options
         run: |
           echo "AWS Util: ${{ github.event.inputs.awsutil }}"
