@@ -2,30 +2,31 @@ name: test
 
 on:
   schedule:
-    - cron: '40 5 * * *'
-  workflow_dispatch:
-    inputs:
-      environment:
-        type: choice
-        description: 'Environment'
-        required: true
-        default: 'dev'
-        options:
-          - dev
-          - qa
+    - cron: '*/5 * * * *'
+    
+  # workflow_dispatch:
+  #   inputs:
+  #     environment:
+  #       type: choice
+  #       description: 'Environment'
+  #       required: true
+  #       default: 'dev'
+  #       options:
+  #         - dev
+  #         - qa
       
-      awsutil:
-        type: boolean
-        description: "AWS Util Layer"
-        required: false
-      log:
-        type: boolean
-        description: "Log Layer"
-        required: false
-      webclient:
-        type: boolean
-        description: "Web Client Layer"
-        required: false
+  #     awsutil:
+  #       type: boolean
+  #       description: "AWS Util Layer"
+  #       required: false
+  #     log:
+  #       type: boolean
+  #       description: "Log Layer"
+  #       required: false
+  #     webclient:
+  #       type: boolean
+  #       description: "Web Client Layer"
+  #       required: false
 
 jobs:
   # prepare:
