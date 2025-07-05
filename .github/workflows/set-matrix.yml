@@ -1,75 +1,63 @@
 name: Set Deployment Matrix
 
 on:
-  workflow_call:
+  push:
+    branches:
+      - 'dev'
+      - 'main'
+
+  workflow_dispatch:
     inputs:
       environment:
-        description: "Target environment (dev, qa, stg, prod, ndev)"
+        description: 'Environment'
         required: true
-        type: string
-    outputs:
-      matrix:
-        description: "The deployment matrix output"
-        value: ${{ jobs.prepare.outputs.matrix }}
+        default: 'ndev'
+        type: choice
+        options:
+          - ndev
+          - nqa
+          - stg
+          - prod
+          - dr
+
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
+
     steps:
-      - name: Generate image tag
-        run: |
-          echo "TIME=$(date +'%m-%d-%Y-t%H-%M')" >> $GITHUB_ENV
-          echo "SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
       - name: Set Matrix
         id: set-matrix
-        run: >
+        run: |
           {
-           # deploy from dev branch to dev
+          # Initialize matrix
           if [[ ${GITHUB_REF} == 'refs/heads/dev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+            # Deploy from dev branch to dev
             echo "matrix<<EOF"
-            echo "{\"include\":[{\"env\":\"dev\",\"image\":\"${{env.SHA}}-dev-${{env.TIME}}\",\"build\":true}]}"
-          elif [[ ${GITHUB_REF} == 'refs/heads/qa' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+            echo "{\"include\":[{\"env\":\"ndev\"]}"
+          elif [[ ${GITHUB_REF} == 'refs/heads/main' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+            # Deploy from main branch to prod
             echo "matrix<<EOF"
-            echo "{\"include\":[{\"env\":\"qa\",\"image\":\"${{env.SHA}}-qa-${{env.TIME}}\",\"build\":true}]}"
-          elif [[ ${GITHUB_REF} == 'refs/heads/stg' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-            echo "matrix<<EOF"
-            echo "{\"include\":[{\"env\":\"stg\",\"image\":\"${{env.SHA}}-stg-${{env.TIME}}\",\"build\":true}]}"
-          elif [[ ${GITHUB_REF} == 'refs/heads/prod' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-            echo "matrix<<EOF"
-            echo "{\"include\":[{\"env\":\"prod\",\"image\":\"${{env.SHA}}-prod-${{env.TIME}}\",\"build\":true}]}"
-          elif [[ ${GITHUB_REF} == 'refs/heads/ndev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-            echo "matrix<<EOF"
-            echo "{\"include\":[{\"env\":\"ndev\",\"image\":\"${{ steps.generate-sha.outputs.sha }}-ndev\",\"build\":false}]}"
-          elif [[ "${{ github.event_name }}" == "release" && "${{ github.event.action }}" == "published" ]]; then
-            echo "matrix<<EOF"
-            echo "{\"include\":[{\"env\":\"stg\",\"image\":\"${{ github.event.release.tag_name }}\",\"build\":false}]}"
+            echo "{\"include\":[{\"env\":\"prod\"]}"
           elif [[ ${{ github.event_name }} == 'workflow_dispatch' ]]; then
+            # Workflow dispatch logic
             echo "matrix<<EOF"
             echo "{\"include\":["
-              if [[ "${{ github.event.inputs.environment }}" == 'dev' ]]; then
-                echo "{\"env\":\"dev\",\"image\":\"${{env.SHA}}-dev-${{env.TIME}}\",\"build\":true},"
-              elif [[ "${{ github.event.inputs.environment }}" == 'qa' ]]; then
-                echo "{\"env\":\"qa\",\"image\":\"${{env.SHA}}-qa-${{env.TIME}}\",\"build\":true},"
-              elif [[ "${{ github.event.inputs.environment }}" == 'stg' ]]; then
-                echo "{\"env\":\"stg\",\"image\":\"${{env.SHA}}-stg-${{env.TIME}}\",\"build\":true},"
-              elif [[ "${{ github.event.inputs.environment }}" == 'ndev' ]]; then
-                echo "{\"env\":\"ndev\",\"image\":\"${{env.SHA}}-ndev-${{env.TIME}}\",\"build\":true},"
-              elif [[ "${{ github.event.inputs.environment }}" == 'prod' ]]; then
-                echo "{\"env\":\"prod\",\"image\":\"${{env.SHA}}-prod-${{env.TIME}}\",\"build\":true},"
-              else
-                echo "{\"env\":\"${environment}\",\"image\":\"latest\"},"
-              fi
+                echo "{\"env\":\"${{ github.event.inputs.environment }}\","
             echo "]}"
           else
+            # Default case: no matrix
             echo "matrix<<EOF"
             echo ""
           fi
-
           echo EOF
-
           } >> $GITHUB_OUTPUT
+          
       - name: Echo Matrix
         run: |
           echo "${{ steps.set-matrix.outputs.matrix }}"
