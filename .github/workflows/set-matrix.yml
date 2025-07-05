@@ -74,3 +74,4 @@ jobs:
       - name: print matrix
         run: |
           echo ${{matrix.env}}
+          echo ${{matrix}}
