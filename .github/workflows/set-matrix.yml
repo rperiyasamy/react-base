@@ -39,11 +39,11 @@ jobs:
           if [[ ${GITHUB_REF} == 'refs/heads/dev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
             # Deploy from dev branch to dev
             echo "matrix<<EOF"
-            echo "{\"include\":[{\"env\":\"ndev\"}]"
+            echo "{\"include\":[{\"env\":\"ndev\"}]}"
           elif [[ ${GITHUB_REF} == 'refs/heads/main' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
             # Deploy from main branch to prod
             echo "matrix<<EOF"
-            echo "{\"include\":[{\"env\":\"prod\"}]"
+            echo "{\"include\":[{\"env\":\"prod\"}]}"
           elif [[ ${{ github.event_name }} == 'workflow_dispatch' ]]; then
             # Workflow dispatch logic
             echo "matrix<<EOF"
