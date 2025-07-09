@@ -84,6 +84,6 @@ jobs:
     steps:
       - name: print matrix
         run: |
-          echo ${{matrix.env}}
+          echo "ENV => ${{matrix.env}}"
           echo ${{matrix}}
-          echo ${{ github.event.inputs.folder }}
+          echo "FOLDER=> ${{ github.event.inputs.folder }}"
