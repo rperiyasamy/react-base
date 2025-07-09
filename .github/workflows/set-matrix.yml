@@ -79,6 +79,8 @@ jobs:
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
       fail-fast: false
+    env:
+      FOLDER: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.folder || 'all' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -86,4 +88,4 @@ jobs:
         run: |
           echo "ENV => ${{matrix.env}}"
           echo ${{matrix}}
-          echo "FOLDER=> ${{ github.event.inputs.folder }}"
+          echo "FOLDER=> ${{ env.FOLDER }}"
