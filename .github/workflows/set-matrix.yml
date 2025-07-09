@@ -19,6 +19,17 @@ on:
           - stg
           - prod
           - dr
+      folder:
+        description: 'Select a folder to deploy'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - drivers
+          - python-libraries
+          - scripts
+          - sql-queries
 
 permissions:
   contents: read
@@ -75,3 +86,4 @@ jobs:
         run: |
           echo ${{matrix.env}}
           echo ${{matrix}}
+          echo ${{ github.event.inputs.folder }}
