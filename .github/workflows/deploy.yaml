@@ -48,3 +48,16 @@ jobs:
       - name: Print Matrix
         run: |
          echo ${{steps.set-matrix.outputs.matrix}}
+
+  build:
+    needs: [prepare]
+    if: ${{ fromJSON(needs.prepare.outputs.matrix !== '')}}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+      fail-fast: false
+    
+    steps:
+      - name: Print data from prepare for debug
+        run: |
+          echo ${{ matrix }}
