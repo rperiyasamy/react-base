@@ -73,5 +73,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: print release notes
-        run: ${{ steps.generate_notes.outputs.body }}
+        run: ${{ steps.generate_notes.outputs }}
       
