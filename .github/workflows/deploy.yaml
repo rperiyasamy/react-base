@@ -51,7 +51,7 @@ jobs:
 
   build:
     needs: [prepare]
-    if: ${{ fromJSON(needs.prepare.outputs.matrix) !== ''}}
+    if: ${{ needs.prepare.outputs.matrix != '' }}
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
