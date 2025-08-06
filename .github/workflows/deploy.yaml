@@ -34,18 +34,17 @@ jobs:
         run: |
           {
             echo "matrix<<EOF"
-            
+
             if [[ ${GITHUB_REF} == 'refs/heads/dev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-              echo "{\"include\":[{\"release\":\"qa\"}]}"
+              echo '{"include":[{"release":"qa"}]}'
             elif [[ ${GITHUB_REF} == 'refs/heads/main' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-              echo "{\"include\":[{\"release\":\"prod\"}]}"
+              echo '{"include":[{"release":"prod"}]}'
             else
               echo ""
             fi
-            
-            echo EOF
-            } >> $GITHUB_OUTPUT
-          }
+
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
       - name: Print Matrix
         run: |
          echo ${{steps.set-matrix.outputs.matrix}}
