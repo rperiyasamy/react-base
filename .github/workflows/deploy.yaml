@@ -64,5 +64,14 @@ jobs:
         run: |
           echo ${{ matrix.release }}
 
-      - name: cmake
-        run: sdkmanager --list | grep cmake
+      - name: Generate Release Notes
+        id: generate_notes
+        uses: release-drafter/release-drafter@v5
+        # with:
+        #   config-name: release-drafter.yml  # optional if default config is used
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: print release notes
+        run: ${{ steps.generate_notes.outputs.body }}
+      
