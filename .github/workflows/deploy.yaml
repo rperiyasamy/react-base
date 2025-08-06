@@ -8,7 +8,7 @@ on:
 
   workflow_dispatch:
     inputs:
-      environment:
+      release:
         type: choice
         description: 'Release'
         required: true
