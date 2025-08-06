@@ -39,8 +39,10 @@ jobs:
               echo '{"include":[{"release":"qa"}]}'
             elif [[ ${GITHUB_REF} == 'refs/heads/main' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
               echo '{"include":[{"release":"prod"}]}'
+            elif [[ ${{ github.event_name }} == 'workflow_dispatch' ]]; then
+              echo '{"include":[{"release":${{ github.event.inputs.release }}]}'
             else
-              echo ""
+              echo '{"include":[{"release":"qa"}]}'
             fi
 
             echo "EOF"
