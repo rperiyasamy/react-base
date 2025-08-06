@@ -74,5 +74,5 @@ jobs:
 
       - name: print release notes
         run: | 
-          echo ${{ steps.generate_notes.outputs }}
+          echo ${{ toJson(steps.generate_notes.outputs) }}
       
