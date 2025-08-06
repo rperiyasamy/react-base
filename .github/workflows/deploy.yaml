@@ -63,3 +63,6 @@ jobs:
       - name: Print data from prepare for debug
         run: |
           echo ${{ matrix.release }}
+
+      - name: cmake
+        run: sdkmanager --list | grep cmake
