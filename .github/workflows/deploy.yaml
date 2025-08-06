@@ -64,15 +64,27 @@ jobs:
         run: |
           echo ${{ matrix.release }}
 
-      - name: Generate Release Notes
-        id: generate_notes
-        uses: release-drafter/release-drafter@v6
-        # with:
-        #   config-name: release-drafter.yml  # optional if default config is used
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+          COMMIT_HASH=$(git rev-parse HEAD)
+          COMMIT_MESSAGE=$(git log -1 --pretty=%s)
+          COMMIT_AUTHOR=$(git log -1 --pretty='%an <%ae>')
+          COMMIT_DATE=$(git log -1 --date=iso --pretty='%cd')
+      
+          {
+            echo "body<<EOF"
+            echo "Branch: $BRANCH_NAME"
+            echo "Commit: $COMMIT_HASH"
+            echo "Message: $COMMIT_MESSAGE"
+            echo "Author: $COMMIT_AUTHOR"
+            echo "Date: $COMMIT_DATE"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
 
       - name: print release notes
         run: | 
-          echo ${{ toJson(steps.generate_notes.outputs) }}
+          echo ${{ toJson(steps.release_notes.outputs) }}
       
