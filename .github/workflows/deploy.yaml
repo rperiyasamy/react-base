@@ -65,27 +65,11 @@ jobs:
           echo ${{ matrix.release }}
       - name: Generate release notes
         run: |
-          echo "- ${{ github.event.head_commit.message }} (${{ github.actor }}, ${GITHUB_SHA:0:7})" > release-notes.txt
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          echo "- ${GITHUB_EVENT_HEAD_COMMIT_MESSAGE} (${GITHUB_ACTOR}, $SHORT_SHA)" > release-notes.txt
 
 
-      - name: Generate release notes
-        id: release_notes
-        run: |
-          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-          COMMIT_HASH=$(git rev-parse HEAD)
-          COMMIT_MESSAGE=$(git log -1 --pretty=%s)
-          COMMIT_AUTHOR=$(git log -1 --pretty='%an <%ae>')
-          COMMIT_DATE=$(git log -1 --date=iso --pretty='%cd')
       
-          {
-            echo "body<<EOF"
-            echo "Branch: $BRANCH_NAME"
-            echo "Commit: $COMMIT_HASH"
-            echo "Message: $COMMIT_MESSAGE"
-            echo "Author: $COMMIT_AUTHOR"
-            echo "Date: $COMMIT_DATE"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
 
 
       - name: print release notes
