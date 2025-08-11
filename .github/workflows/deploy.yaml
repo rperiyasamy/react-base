@@ -20,10 +20,10 @@ on:
         type: choice
         description: 'Enable ECG'
         required: true
-        default: 'no'
+        default: 'disable'
         options:
-          - yes
-          - no
+          - enable
+          - disable
 
 permissions:
   contents: read
@@ -81,6 +81,6 @@ jobs:
         run: | 
           echo ${{ github.event.inputs.ECG }}
       - name: ecg condition
-        if: ${{ github.event.inputs.ECG }} == 'yes'
+        if: ${{ github.event.inputs.ECG }} == 'enable'
         run: echo "ECG - Enabled"
       
