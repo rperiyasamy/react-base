@@ -78,6 +78,6 @@ jobs:
         run: | 
           echo ${{ github.event.inputs.ECG }}
       - name: ecg condition
-        if: "${{ github.event.inputs.ECG }} == true"
+        if: "${{ github.event.inputs.ECG }} == 'true'"
         run: echo "ECG - Enabled"
       
