@@ -16,6 +16,11 @@ on:
         options:
           - qa
           - prod
+      ECG:
+        type: boolean
+        description: 'Enable ECG'
+        required: false
+        default: false
 
 permissions:
   contents: read
@@ -69,11 +74,10 @@ jobs:
           echo "- ${{ github.event.head_commit.message }} (${{ github.actor }}, ${SHORT_SHA})"
           # echo "- ${GITHUB_EVENT_HEAD_COMMIT_MESSAGE} (${GITHUB_ACTOR}, $SHORT_SHA)" > release-notes.txt
 
-
-      
-
-
-      - name: print release notes
+      - name: print ECG
         run: | 
-          echo ${{ toJson(steps.release_notes.outputs) }}
+          echo ${{ github.event.inputs.ECG }}
+      - name: ecg condition
+        if: "${{ github.event.inputs.ECG }} == true"
+        run: echo "ECG - Enabled"
       
