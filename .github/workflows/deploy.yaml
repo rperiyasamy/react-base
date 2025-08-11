@@ -16,7 +16,7 @@ on:
         options:
           - qa
           - prod
-      ECG:
+      ecg:
         type: choice
         description: 'Enable ECG'
         required: true
@@ -79,8 +79,8 @@ jobs:
 
       - name: print ECG
         run: | 
-          echo ${{ github.event.inputs.ECG }}
+          echo ${{ github.event.inputs.ecg }}
       - name: ecg condition
-        if: ${{ github.event.inputs.ECG }} == 'enable'
+        if: ${{ github.event.inputs.ecg }} == 'enable'
         run: echo "ECG - Enabled"
       
