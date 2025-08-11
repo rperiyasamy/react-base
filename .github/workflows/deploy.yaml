@@ -17,10 +17,13 @@ on:
           - qa
           - prod
       ECG:
-        type: boolean
+        type: choice
         description: 'Enable ECG'
-        required: false
-        default: false
+        required: true
+        default: 'no'
+        options:
+          - yes
+          - no
 
 permissions:
   contents: read
