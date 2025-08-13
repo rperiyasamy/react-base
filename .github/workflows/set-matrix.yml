@@ -36,42 +36,42 @@ permissions:
   id-token: write
   issues: write
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+  # prepare:
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     matrix: ${{ steps.set-matrix.outputs.matrix }}
 
-    steps:
-      - name: Set Matrix
-        id: set-matrix
-        run: |
-          {
-          # Initialize matrix
-          if [[ ${GITHUB_REF} == 'refs/heads/dev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-            # Deploy from dev branch to dev
-            echo "matrix<<EOF"
-            echo "{\"include\":[{\"env\":\"ndev\"}]}"
-          elif [[ ${GITHUB_REF} == 'refs/heads/main' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-            # Deploy from main branch to prod
-            echo "matrix<<EOF"
-            echo "{\"include\":[{\"env\":\"prod\"}]}"
-          elif [[ ${{ github.event_name }} == 'workflow_dispatch' ]]; then
-            # Workflow dispatch logic
-            echo "matrix<<EOF"
-            echo "{\"include\":["
-                echo "{\"env\":\"${{ github.event.inputs.environment }}\",}"
-            echo "]}"
-          else
-            # Default case: no matrix
-            echo "matrix<<EOF"
-            echo ""
-          fi
-          echo EOF
-          } >> $GITHUB_OUTPUT
+  #   steps:
+  #     - name: Set Matrix
+  #       id: set-matrix
+  #       run: |
+  #         {
+  #         # Initialize matrix
+  #         if [[ ${GITHUB_REF} == 'refs/heads/dev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+  #           # Deploy from dev branch to dev
+  #           echo "matrix<<EOF"
+  #           echo "{\"include\":[{\"env\":\"ndev\"}]}"
+  #         elif [[ ${GITHUB_REF} == 'refs/heads/main' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+  #           # Deploy from main branch to prod
+  #           echo "matrix<<EOF"
+  #           echo "{\"include\":[{\"env\":\"prod\"}]}"
+  #         elif [[ ${{ github.event_name }} == 'workflow_dispatch' ]]; then
+  #           # Workflow dispatch logic
+  #           echo "matrix<<EOF"
+  #           echo "{\"include\":["
+  #               echo "{\"env\":\"${{ github.event.inputs.environment }}\",}"
+  #           echo "]}"
+  #         else
+  #           # Default case: no matrix
+  #           echo "matrix<<EOF"
+  #           echo ""
+  #         fi
+  #         echo EOF
+  #         } >> $GITHUB_OUTPUT
           
-      - name: Echo Matrix
-        run: |
-          echo "${{ steps.set-matrix.outputs.matrix }}"
+  #     - name: Echo Matrix
+  #       run: |
+  #         echo "${{ steps.set-matrix.outputs.matrix }}"
 
   set-env:
     runs-on: ubuntu-latest
@@ -95,9 +95,9 @@ jobs:
             fi
           fi
       - name: print matrix
-        run: echo steps.set.outputs.environment
+        run: echo ${{ steps.set.outputs.environment }}
   approval:
-    needs: [prepare]
+    needs: [set-env]
     if: |
       always() 
     runs-on: ubuntu-latest
@@ -153,7 +153,7 @@ jobs:
   #       run: echo "Auto approved for ${{ matrix.env }} environment"
         
   build:
-    needs: [prepare, approval]
+    needs: [set-env, approval]
     if: ${{ needs.prepare.outputs.matrix != '' }}
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
