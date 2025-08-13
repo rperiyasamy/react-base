@@ -72,6 +72,54 @@ jobs:
       - name: Echo Matrix
         run: |
           echo "${{ steps.set-matrix.outputs.matrix }}"
+
+  set-env:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set.outputs.environment }}
+    steps:
+      - name: Determine Environment
+        id: set
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+            if [[ "$BRANCH" == "dev" ]]; then
+              echo "environment=ndev" >> $GITHUB_OUTPUT
+            elif [[ "$BRANCH" == "main" ]]; then
+              echo "environment=prod" >> $GITHUB_OUTPUT
+            else
+              echo "Unknown branch: $BRANCH"
+              exit 1
+            fi
+          fi
+  approval:
+    needs: [prepare]
+    if: |
+      always() 
+    runs-on: ubuntu-latest
+    environment: ${{ needs.set-env.outputs.environment }}
+    env:
+      APP_ENV: ${{ needs.set-env.outputs.environment }}
+    steps:
+      - name: approve-prod-deployment
+        if: ${{ env.APP_ENV == 'prod' }}
+        uses: trstringer/manual-approval@v1
+        timeout-minutes: 30
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: lphilipsc1,rperiyasamy
+          minimum-approvals: 1
+          issue-title: "Deploying ETL Glue job scripts to ${{ env.APP_ENV }}"
+
+      - name: Approval Received
+        if: ${{ env.APP_ENV == 'prod' }}
+        run: echo "Approval for deploying ETL Glue job scripts to ${{ env.APP_ENV }} was received"
+
+      - name: Auto approve for non-prod environments
+        if: ${{ env.APP_ENV != 'prod' }}
+        run: echo "Auto approved for ${{ env.APP_ENV }} environment"
   # approval:
   #   needs: [prepare]
   #   if: |
