@@ -154,9 +154,9 @@ jobs:
         
   build:
     needs: [set-env, approval]
-    if: ${{ needs.prepare.outputs.matrix != '' }}
+    if: ${{ needs.set-env.outputs.environment }}
     strategy:
-      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.set-env.outputs.environment) }}
       fail-fast: false
     env:
       FOLDER: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.folder || 'all' }}
