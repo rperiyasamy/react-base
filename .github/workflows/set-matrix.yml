@@ -168,3 +168,5 @@ jobs:
           echo "ENV => ${{matrix.env}}"
           echo ${{matrix}}
           echo "FOLDER=> $FOLDER"
+      - name: print git run number
+        run: echo ${{ github.run_number }}
