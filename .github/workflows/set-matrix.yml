@@ -96,32 +96,32 @@ jobs:
           fi
       - name: print matrix
         run: echo ${{ steps.set.outputs.environment }}
-  approval:
-    needs: [set-env]
-    if: |
-      always() 
-    runs-on: ubuntu-latest
-    environment: ${{ needs.set-env.outputs.environment }}
-    env:
-      APP_ENV: ${{ needs.set-env.outputs.environment }}
-    steps:
-      - name: approve-prod-deployment
-        if: ${{ env.APP_ENV == 'prod' }}
-        uses: trstringer/manual-approval@v1
-        timeout-minutes: 30
-        with:
-          secret: ${{ github.TOKEN }}
-          approvers: rperiyasamy
-          minimum-approvals: 1
-          issue-title: "Deploying ETL Glue job scripts to ${{ env.APP_ENV }}"
+  # approval:
+  #   needs: [set-env]
+  #   if: |
+  #     always() 
+  #   runs-on: ubuntu-latest
+  #   environment: ${{ needs.set-env.outputs.environment }}
+  #   env:
+  #     APP_ENV: ${{ needs.set-env.outputs.environment }}
+  #   steps:
+  #     - name: approve-prod-deployment
+  #       if: ${{ env.APP_ENV == 'prod' }}
+  #       uses: trstringer/manual-approval@v1
+  #       timeout-minutes: 30
+  #       with:
+  #         secret: ${{ github.TOKEN }}
+  #         approvers: rperiyasamy
+  #         minimum-approvals: 1
+  #         issue-title: "Deploying ETL Glue job scripts to ${{ env.APP_ENV }}"
 
-      - name: Approval Received
-        if: ${{ env.APP_ENV == 'prod' }}
-        run: echo "Approval for deploying ETL Glue job scripts to ${{ env.APP_ENV }} was received"
+  #     - name: Approval Received
+  #       if: ${{ env.APP_ENV == 'prod' }}
+  #       run: echo "Approval for deploying ETL Glue job scripts to ${{ env.APP_ENV }} was received"
 
-      - name: Auto approve for non-prod environments
-        if: ${{ env.APP_ENV != 'prod' }}
-        run: echo "Auto approved for ${{ env.APP_ENV }} environment"
+  #     - name: Auto approve for non-prod environments
+  #       if: ${{ env.APP_ENV != 'prod' }}
+  #       run: echo "Auto approved for ${{ env.APP_ENV }} environment"
   # approval:
   #   needs: [prepare]
   #   if: |
@@ -153,7 +153,7 @@ jobs:
   #       run: echo "Auto approved for ${{ matrix.env }} environment"
         
   build:
-    needs: [set-env, approval]
+    needs: [set-env]
     if: ${{ needs.set-env.outputs.environment }}
     strategy:
       matrix: ${{ fromJSON(needs.set-env.outputs.environment) }}
