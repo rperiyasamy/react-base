@@ -78,6 +78,8 @@ jobs:
     outputs:
       environment: ${{ steps.set.outputs.environment }}
     steps:
+      - name: print git run number
+        run: echo ${{ github.run_number }}
       - name: Determine Environment
         id: set
         run: |
@@ -168,5 +170,4 @@ jobs:
           echo "ENV => ${{matrix.env}}"
           echo ${{matrix}}
           echo "FOLDER=> $FOLDER"
-      - name: print git run number
-        run: echo ${{ github.run_number }}
+      
