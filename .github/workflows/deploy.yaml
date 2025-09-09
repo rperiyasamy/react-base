@@ -56,6 +56,31 @@ jobs:
         run: |
          echo ${{steps.set-matrix.outputs.matrix}}
 
+  approval:
+    needs: [prepare]
+    runs-on: ubuntu-latest
+    environment: 'prod'
+    env:
+      APP_ENV: 'prod'
+    steps:
+      - name: approve-prod-deployment
+        if: ${{ env.APP_ENV == 'prod' }}
+        uses: trstringer/manual-approval@v1
+        timeout-minutes: 30
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: lphilipsc1,rperiyasamy
+          minimum-approvals: 1
+          issue-title: "Deploying ETL Glue job scripts to ${{ env.APP_ENV }}"
+
+      - name: Approval Received
+        if: ${{ env.APP_ENV == 'prod' }}
+        run: echo "Approval for deploying ETL Glue job scripts to ${{ env.APP_ENV }} was received"
+
+      # - name: Auto approve for non-prod environments
+      #   if: ${{ env.APP_ENV != 'prod' }}
+      #   run: echo "Auto approved for ${{ env.APP_ENV }} environment"
+
   build:
     needs: [prepare]
     if: ${{ needs.prepare.outputs.matrix != '' }}
