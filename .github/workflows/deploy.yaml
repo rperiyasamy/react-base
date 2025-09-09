@@ -70,7 +70,7 @@ jobs:
         timeout-minutes: 30
         with:
           secret: ${{ github.TOKEN }}
-          approvers: rperiyasamy
+          approvers: raja.periyasamy@concertidc.com
           minimum-approvals: 1
           issue-title: "Deploying ETL Glue job scripts to ${{ env.APP_ENV }}"
 
