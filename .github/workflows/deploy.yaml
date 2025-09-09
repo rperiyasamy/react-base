@@ -60,9 +60,9 @@ jobs:
   approval:
     needs: [prepare]
     runs-on: ubuntu-latest
-    environment: 'dev'
+    # environment: 'prod'
     env:
-      APP_ENV: 'dev'
+      APP_ENV: 'prod'
     steps:
       - name: approve-prod-deployment
         if: ${{ env.APP_ENV == 'prod' }}
