@@ -63,6 +63,7 @@ jobs:
     # environment: 'prod'
     env:
       APP_ENV: 'prod'
+      APPROVERS: ${{ vars.APPROVERS }}
     steps:
       - name: approve-prod-deployment
         if: ${{ env.APP_ENV == 'prod' }}
@@ -70,7 +71,7 @@ jobs:
         timeout-minutes: 30
         with:
           secret: ${{ github.TOKEN }}
-          approvers: ${{ vars.APPROVERS }}
+          approvers: ${{ env.APPROVERS }}
           minimum-approvals: 1
           issue-title: "Deploying ETL Glue job scripts to ${{ env.APP_ENV }}"
 
