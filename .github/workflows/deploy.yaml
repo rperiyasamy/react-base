@@ -61,7 +61,7 @@ jobs:
   approval:
     needs: [prepare]
     runs-on: ubuntu-latest
-    # environment: 'prod'
+    environment: 'prod'
     env:
       APP_ENV: 'prod'
       APPROVERS: ${{ vars.APPROVERS }}
