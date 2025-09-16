@@ -78,7 +78,7 @@ jobs:
         timeout-minutes: 30
         with:
           secret: ${{ github.TOKEN }}
-          # approvers: ${{ env.APPROVERS }}
+          approvers: ${{ vars.APPROVERS }}
           minimum-approvals: 1
           issue-title: "Deploying ETL Glue job scripts to ${{ env.APP_ENV }}"
 
