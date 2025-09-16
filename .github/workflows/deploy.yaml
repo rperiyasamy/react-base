@@ -63,7 +63,7 @@ jobs:
     # environment: 'prod'
     env:
       APP_ENV: 'prod'
-      INPUT_APPROVERS: ${{ vars.APPROVERS }}
+      APPROVERS: ${{ vars.APPROVERS }}
     steps:
       - name: approve-prod-deployment
         if: ${{ env.APP_ENV == 'prod' }}
