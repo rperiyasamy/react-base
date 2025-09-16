@@ -22,7 +22,7 @@ on:
         required: false
         default: false
 env:
-  APPROVERS: ${{ vars.APPROVERS }}
+  INPUT_APPROVERS: ${{ vars.APPROVERS }}
 permissions:
   contents: read
   pull-requests: write
