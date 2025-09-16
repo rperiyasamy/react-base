@@ -21,7 +21,8 @@ on:
         description: 'Enable ECG'
         required: false
         default: false
-
+env:
+  APPROVERS: ${{ vars.APPROVERS }}
 permissions:
   contents: read
   pull-requests: write
@@ -63,7 +64,6 @@ jobs:
     # environment: 'prod'
     env:
       APP_ENV: 'prod'
-      APPROVERS: ${{ vars.APPROVERS }}
     steps:
       - name: approve-prod-deployment
         if: ${{ env.APP_ENV == 'prod' }}
