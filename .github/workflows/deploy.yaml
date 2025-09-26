@@ -14,6 +14,7 @@ on:
         required: true
         default: 'qa'
         options:
+          - dev
           - qa
           - prod
       ECG:
