@@ -56,37 +56,37 @@ jobs:
          echo ${{steps.set-matrix.outputs.matrix}}
     
 
-  approval:
-    needs: [prepare]
-    runs-on: ubuntu-latest
-    environment: 'prod'
-    env:
-      APP_ENV: 'prod'
-      APPROVERS: ${{ vars.APPROVERS }}
-    steps:
-      - name: debug env from vars
-        run: |
-          echo "APPROVERS=${{ vars.APPROVERS }}"
-      - name: debug env
-        run: |
-          echo "APPROVERS=${{ env.APPROVERS }}"
-      - name: approve-prod-deployment
-        if: ${{ env.APP_ENV == 'prod' }}
-        uses: trstringer/manual-approval@v1
-        timeout-minutes: 30
-        with:
-          secret: ${{ github.TOKEN }}
-          approvers: ${{ vars.APPROVERS }}
-          minimum-approvals: 1
-          issue-title: "Deploying ETL Glue job scripts to ${{ env.APP_ENV }}"
+  # approval:
+  #   needs: [prepare]
+  #   runs-on: ubuntu-latest
+  #   environment: 'prod'
+  #   env:
+  #     APP_ENV: 'prod'
+  #     APPROVERS: ${{ vars.APPROVERS }}
+  #   steps:
+  #     - name: debug env from vars
+  #       run: |
+  #         echo "APPROVERS=${{ vars.APPROVERS }}"
+  #     - name: debug env
+  #       run: |
+  #         echo "APPROVERS=${{ env.APPROVERS }}"
+  #     - name: approve-prod-deployment
+  #       if: ${{ env.APP_ENV == 'prod' }}
+  #       uses: trstringer/manual-approval@v1
+  #       timeout-minutes: 30
+  #       with:
+  #         secret: ${{ github.TOKEN }}
+  #         approvers: ${{ vars.APPROVERS }}
+  #         minimum-approvals: 1
+  #         issue-title: "Deploying ETL Glue job scripts to ${{ env.APP_ENV }}"
 
-      - name: Approval Received
-        if: ${{ env.APP_ENV == 'prod' }}
-        run: echo "Approval for deploying ETL Glue job scripts to ${{ env.APP_ENV }} was received"
+  #     - name: Approval Received
+  #       if: ${{ env.APP_ENV == 'prod' }}
+  #       run: echo "Approval for deploying ETL Glue job scripts to ${{ env.APP_ENV }} was received"
 
-      # - name: Auto approve for non-prod environments
-      #   if: ${{ env.APP_ENV != 'prod' }}
-      #   run: echo "Auto approved for ${{ env.APP_ENV }} environment"
+  #     # - name: Auto approve for non-prod environments
+  #     #   if: ${{ env.APP_ENV != 'prod' }}
+  #     #   run: echo "Auto approved for ${{ env.APP_ENV }} environment"
 
   build:
     needs: [prepare, approval]
