@@ -40,17 +40,15 @@ jobs:
         run: |
           {
             echo "matrix<<EOF"
-
             if [[ ${GITHUB_REF} == 'refs/heads/dev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-              echo '{"include":[{"release":"qa"}]}'
+              echo '{"include":[{"env":"dev"}]}'
             elif [[ ${GITHUB_REF} == 'refs/heads/main' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-              echo '{"include":[{"release":"prod"}]}'
+              echo '{"include":[{"env":"prod"}]}'
             elif [[ ${{ github.event_name }} == 'workflow_dispatch' ]]; then
-              echo '{"include":[{"release":"${{ github.event.inputs.release }}"}]}'
+              echo '{"include":[{"env":"${{ github.event.inputs.environment }}"}]}'
             else
-              echo '{"include":[{"release":"qa"}]}'
+              echo '{"include":[{"env":"dev"}]}'
             fi
-
             echo "EOF"
           } >> $GITHUB_OUTPUT
       - name: Print Matrix
@@ -102,6 +100,27 @@ jobs:
       - name: Print data from prepare for debug
         run: |
           echo ${{ matrix.release }}
+
+      - name: Decide APK name
+        if: "${{ matrix.env == 'dev' || matrix.env == 'stage'}}"
+        id: apk
+        run: |
+          ECG_INPUT="${{ github.event.inputs.ECG || 'false' }}"
+          if [ "${{ matrix.env }}" = "dev" ] && [ "$ECG_INPUT" = "false" ]; then
+            apk_path="app/build/outputs/apk/debug/app-debug.apk"
+          elif [ "${{ matrix.env }}" = "dev" ] && [ "$ECG_INPUT" = "true" ]; then
+            apk_path="app/build/outputs/apk/debugECG/app-debugECG.apk"
+          elif [ "${{ matrix.env }}" = "stage" ] && [ "$ECG_INPUT" = "false" ]; then
+            apk_path="app/build/outputs/apk/stage/app-stage.apk"
+          elif [ "${{ matrix.env }}" = "stage" ] && [ "$ECG_INPUT" = "true" ]; then
+            apk_path="app/build/outputs/apk/stageECG/app-stageECG.apk"
+          else
+            echo "Unknown environment: ${{ matrix.env }}"
+            exit 1
+          fi
+          echo $apk_path
+          echo "apk_path=$apk_path" >> $GITHUB_OUTPUT
+          
       - name: Generate release notes
         run: |
           SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
@@ -114,4 +133,6 @@ jobs:
       - name: ecg condition
         if: ${{ github.event.inputs.ECG == 'true' }}
         run: echo "ECG - Enabled"
+
+      
       
