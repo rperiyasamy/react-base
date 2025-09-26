@@ -3,8 +3,8 @@ name: Set Deployment Matrix
 on:
   push:
     branches:
-      - 'dev'
-      - 'main'
+      - 'dev1'
+      - 'main1'
 
   workflow_dispatch:
     inputs:
@@ -19,59 +19,155 @@ on:
           - stg
           - prod
           - dr
+      folder:
+        description: 'Select a folder to deploy'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - drivers
+          - python-libraries
+          - scripts
+          - sql-queries
 
 permissions:
   contents: read
   id-token: write
-
+  issues: write
 jobs:
-  prepare:
+  # prepare:
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+  #   steps:
+  #     - name: Set Matrix
+  #       id: set-matrix
+  #       run: |
+  #         {
+  #         # Initialize matrix
+  #         if [[ ${GITHUB_REF} == 'refs/heads/dev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+  #           # Deploy from dev branch to dev
+  #           echo "matrix<<EOF"
+  #           echo "{\"include\":[{\"env\":\"ndev\"}]}"
+  #         elif [[ ${GITHUB_REF} == 'refs/heads/main' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+  #           # Deploy from main branch to prod
+  #           echo "matrix<<EOF"
+  #           echo "{\"include\":[{\"env\":\"prod\"}]}"
+  #         elif [[ ${{ github.event_name }} == 'workflow_dispatch' ]]; then
+  #           # Workflow dispatch logic
+  #           echo "matrix<<EOF"
+  #           echo "{\"include\":["
+  #               echo "{\"env\":\"${{ github.event.inputs.environment }}\",}"
+  #           echo "]}"
+  #         else
+  #           # Default case: no matrix
+  #           echo "matrix<<EOF"
+  #           echo ""
+  #         fi
+  #         echo EOF
+  #         } >> $GITHUB_OUTPUT
+          
+  #     - name: Echo Matrix
+  #       run: |
+  #         echo "${{ steps.set-matrix.outputs.matrix }}"
+
+  set-env:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-
+      environment: ${{ steps.set.outputs.environment }}
     steps:
-      - name: Set Matrix
-        id: set-matrix
+      - name: print git run number
+        run: echo ${{ github.run_number }}
+      - name: Determine Environment
+        id: set
         run: |
-          {
-          # Initialize matrix
-          if [[ ${GITHUB_REF} == 'refs/heads/dev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-            # Deploy from dev branch to dev
-            echo "matrix<<EOF"
-            echo "{\"include\":[{\"env\":\"ndev\"}]}"
-          elif [[ ${GITHUB_REF} == 'refs/heads/main' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-            # Deploy from main branch to prod
-            echo "matrix<<EOF"
-            echo "{\"include\":[{\"env\":\"prod\"}]}"
-          elif [[ ${{ github.event_name }} == 'workflow_dispatch' ]]; then
-            # Workflow dispatch logic
-            echo "matrix<<EOF"
-            echo "{\"include\":["
-                echo "{\"env\":\"${{ github.event.inputs.environment }}\","
-            echo "]}"
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
           else
-            # Default case: no matrix
-            echo "matrix<<EOF"
-            echo ""
+            BRANCH="${GITHUB_REF#refs/heads/}"
+            if [[ "$BRANCH" == "dev" ]]; then
+              echo "environment=ndev" >> $GITHUB_OUTPUT
+            elif [[ "$BRANCH" == "main" ]]; then
+              echo "environment=prod" >> $GITHUB_OUTPUT
+            else
+              echo "Unknown branch: $BRANCH"
+              exit 1
+            fi
           fi
-          echo EOF
-          } >> $GITHUB_OUTPUT
-          
-      - name: Echo Matrix
-        run: |
-          echo "${{ steps.set-matrix.outputs.matrix }}"
+      - name: print matrix
+        run: echo ${{ steps.set.outputs.environment }}
+  # approval:
+  #   needs: [set-env]
+  #   if: |
+  #     always() 
+  #   runs-on: ubuntu-latest
+  #   environment: ${{ needs.set-env.outputs.environment }}
+  #   env:
+  #     APP_ENV: ${{ needs.set-env.outputs.environment }}
+  #   steps:
+  #     - name: approve-prod-deployment
+  #       if: ${{ env.APP_ENV == 'prod' }}
+  #       uses: trstringer/manual-approval@v1
+  #       timeout-minutes: 30
+  #       with:
+  #         secret: ${{ github.TOKEN }}
+  #         approvers: rperiyasamy
+  #         minimum-approvals: 1
+  #         issue-title: "Deploying ETL Glue job scripts to ${{ env.APP_ENV }}"
 
+  #     - name: Approval Received
+  #       if: ${{ env.APP_ENV == 'prod' }}
+  #       run: echo "Approval for deploying ETL Glue job scripts to ${{ env.APP_ENV }} was received"
+
+  #     - name: Auto approve for non-prod environments
+  #       if: ${{ env.APP_ENV != 'prod' }}
+  #       run: echo "Auto approved for ${{ env.APP_ENV }} environment"
+  # approval:
+  #   needs: [prepare]
+  #   if: |
+  #     always() 
+  #   strategy:
+  #     matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+  #     fail-fast: false
+  #   runs-on: ubuntu-latest
+  #   environment: ${{ matrix.env }}
+  #   env:
+  #     APP_ENV: ${{ matrix.env }}
+  #   steps:
+  #     - name: approve-prod-deployment
+  #       if: ${{ matrix.env == 'prod' }}
+  #       uses: trstringer/manual-approval@v1
+  #       timeout-minutes: 30
+  #       with:
+  #         secret: ${{ github.TOKEN }}
+  #         approvers: rperiyasamy
+  #         minimum-approvals: 1
+  #         issue-title: "Deploying MYAPP to ${{ matrix.env }}"
+
+  #     - name: Approval Received
+  #       if: ${{ matrix.env == 'prod' }}
+  #       run: echo "Approval for deploying MYAPP to ${{ matrix.env }} was received"
+
+  #     - name: Auto approve for non-prod environments
+  #       if: ${{ matrix.env != 'prod' }}
+  #       run: echo "Auto approved for ${{ matrix.env }} environment"
+        
   build:
-    needs: [prepare]
-    if: ${{ needs.prepare.outputs.matrix != '' }}
+    needs: [set-env]
+    if: ${{ needs.set-env.outputs.environment }}
     strategy:
-      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.set-env.outputs.environment) }}
       fail-fast: false
+    env:
+      FOLDER: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.folder || 'all' }}
     runs-on: ubuntu-latest
 
     steps:
       - name: print matrix
         run: |
-          echo ${{matrix.env}}
+          echo "ENV => ${{matrix.env}}"
           echo ${{matrix}}
+          echo "FOLDER=> $FOLDER"
+      
