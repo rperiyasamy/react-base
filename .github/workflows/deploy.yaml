@@ -89,7 +89,7 @@ jobs:
   #     #   run: echo "Auto approved for ${{ env.APP_ENV }} environment"
 
   build:
-    needs: [prepare, approval]
+    needs: [prepare]
     if: ${{ needs.prepare.outputs.matrix != '' }}
     runs-on: ubuntu-latest
     strategy:
