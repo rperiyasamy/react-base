@@ -132,6 +132,7 @@ jobs:
           # echo "- ${GITHUB_EVENT_HEAD_COMMIT_MESSAGE} (${GITHUB_ACTOR}, $SHORT_SHA)" > release-notes.txt
 
       - name: print ECG
+        if: "${{ matrix.env == 'dev' && env.ECG_INPUT == 'false' }}"
         run: | 
           echo ${{ github.event.inputs.ECG }}
       - name: ecg condition
