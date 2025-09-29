@@ -8,12 +8,13 @@ on:
 
   workflow_dispatch:
     inputs:
-      release:
+      environment:
         type: choice
         description: 'Release'
         required: true
         default: 'qa'
         options:
+          - dev
           - qa
           - prod
       ECG:
@@ -95,7 +96,9 @@ jobs:
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
       fail-fast: false
-    
+    env:
+      ECG_INPUT: ${{ github.event.inputs.ECG || 'false' }}
+      
     steps:
       - name: Print data from prepare for debug
         run: |
@@ -105,7 +108,8 @@ jobs:
         if: "${{ matrix.env == 'dev' || matrix.env == 'stage'}}"
         id: apk
         run: |
-          ECG_INPUT="${{ github.event.inputs.ECG || 'false' }}"
+          # ECG_INPUT="${{ github.event.inputs.ECG || 'false' }}"
+          ECG_INPUT=${{ env.ECG_INPUT }}
           if [ "${{ matrix.env }}" = "dev" ] && [ "$ECG_INPUT" = "false" ]; then
             apk_path="app/build/outputs/apk/debug/app-debug.apk"
           elif [ "${{ matrix.env }}" = "dev" ] && [ "$ECG_INPUT" = "true" ]; then
