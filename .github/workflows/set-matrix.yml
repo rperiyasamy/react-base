@@ -78,8 +78,8 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      
       - name: Set Deployment Matrix
         id: set-matrix
         uses: ./.github/actions/set-deployment-matrix
