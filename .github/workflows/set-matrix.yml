@@ -73,6 +73,17 @@ jobs:
   #       run: |
   #         echo "${{ steps.set-matrix.outputs.matrix }}"
 
+  set-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Set Deployment Matrix
+        id: set-matrix
+        uses: ./.github/actions/set-deployment-matrix
+        with:
+          environment: ndev
+
   set-env:
     runs-on: ubuntu-latest
     outputs:
@@ -155,19 +166,26 @@ jobs:
   #       run: echo "Auto approved for ${{ matrix.env }} environment"
         
   build:
-    needs: [set-env]
+    needs: [set-env, set-matrix]
     if: ${{ needs.set-env.outputs.environment }}
     strategy:
-      matrix: ${{ fromJSON(needs.set-env.outputs.environment) }}
+      # matrix: ${{ fromJSON(needs.set-env.outputs.environment) }}
+      matrix: ${{ fromJson(needs.set-matrix.outputs.matrix).include }}
       fail-fast: false
     env:
       FOLDER: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.folder || 'all' }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: print matrix
+      # - name: print matrix
+      #   run: |
+      #     echo "ENV => ${{matrix.env}}"
+      #     echo ${{matrix}}
+      #     echo "FOLDER=> $FOLDER"
+
+      - name: Deploy
         run: |
-          echo "ENV => ${{matrix.env}}"
-          echo ${{matrix}}
-          echo "FOLDER=> $FOLDER"
+          echo "Deploying to: ${{ matrix.env }}"
+          echo "Image: ${{ matrix.image }}"
+          echo "Build: ${{ matrix.build }}"
       
