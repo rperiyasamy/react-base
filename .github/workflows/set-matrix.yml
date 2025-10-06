@@ -82,7 +82,7 @@ jobs:
         id: set-matrix
         uses: ./.github/actions/set-deployment-matrix
         with:
-          environment: ndev
+          environment: ${{ github.event.inputs.environment }}
 
   set-env:
     runs-on: ubuntu-latest
