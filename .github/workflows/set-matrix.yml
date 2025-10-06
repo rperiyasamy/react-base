@@ -82,7 +82,7 @@ jobs:
       
       - name: Set Deployment Matrix
         id: set-matrix
-        uses: ./.github/actions/set-deployment-matrix
+        uses: ./.github/actions/set-deployment-matrix.yaml
         with:
           environment: ${{ github.event.inputs.environment }}
 
