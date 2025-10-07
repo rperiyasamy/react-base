@@ -60,10 +60,6 @@ runs:
                 IMAGE="latest"
                 BUILD=false ;;
             esac ;;
-          release)
-            if [[ "${{ github.event.action }}" == "published" ]]; then
-              ENV="prod"; IMAGE="${{ github.event.release.tag_name }}"; BUILD=true
-            fi ;;
         esac
 
         if [[ -n "${ENV:-}" && -n "${IMAGE:-}" ]]; then
