@@ -1,0 +1,76 @@
+name: "Set Deployment Matrix"
+description: "Generates a deployment matrix based on event type and optional build name"
+
+inputs:
+  build_name:
+    description: "Optional build name (used as SHA)"
+    required: false
+  environment:
+    description: "Target environment (for workflow_dispatch)"
+    required: false
+
+outputs:
+  matrix:
+    description: "Generated deployment matrix as JSON"
+    value: ${{ steps.generate.outputs.matrix }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Generate image tag (SHA)
+      id: generate-sha
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        if [[ -n "${{ inputs.build_name }}" ]]; then
+          echo "sha=${{ inputs.build_name }}" >> "$GITHUB_OUTPUT"
+        else
+          echo "sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Generate Deployment Matrix
+      id: generate
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        SHA="${{ steps.generate-sha.outputs.sha }}"
+        ENV="${{ inputs.environment }}"
+        ENV="${ENV:-}"  # ensure ENV is not null, set to empty string if unset
+
+        MATRIX=""
+
+        case "${{ github.event_name }}" in
+          push)
+            case "${{ github.ref }}" in
+              refs/heads/dev)   ENV="ndev";  IMAGE="$SHA-ndev";  BUILD=true ;;
+              refs/heads/main)  ENV="prod";  IMAGE="$SHA-prod";  BUILD=false ;;
+            esac ;;
+          pull_request)
+            if [[ "${{ github.event.pull_request.base.ref }}" == "main" ]]; then
+              ENV="pr"; IMAGE="$SHA"; BUILD=false
+            fi ;;
+          workflow_dispatch)
+            case "$ENV" in
+              ndev|nqa|stg|prod|dr)
+                IMAGE="$SHA-$ENV"
+                BUILD=$([[ "$ENV" == "ndev" ]] && echo true || echo false) ;;
+              *)
+                IMAGE="latest"
+                BUILD=false ;;
+            esac ;;
+          release)
+            if [[ "${{ github.event.action }}" == "published" ]]; then
+              ENV="prod"; IMAGE="${{ github.event.release.tag_name }}"; BUILD=true
+            fi ;;
+        esac
+
+        if [[ -n "${ENV:-}" && -n "${IMAGE:-}" ]]; then
+          MATRIX="{\"include\":[{\"env\":\"$ENV\",\"image\":\"$IMAGE\",\"build\":$BUILD}]}"
+        fi
+
+        echo "matrix<<EOF" >> "$GITHUB_OUTPUT"
+        echo "$MATRIX" >> "$GITHUB_OUTPUT"
+        echo "EOF" >> "$GITHUB_OUTPUT"
+
