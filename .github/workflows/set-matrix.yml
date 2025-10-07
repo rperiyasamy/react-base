@@ -91,6 +91,10 @@ jobs:
         uses: ./.github/set-deployment-matrix
         with:
           environment: ${{ github.event.inputs.environment }}
+      
+      - name: Print Matrix
+        run: |
+         echo ${{steps.set-matrix.outputs.matrix}}
 
   # set-env:
   #   runs-on: ubuntu-latest
