@@ -172,7 +172,7 @@ jobs:
     if: ${{ needs.set-env.outputs.environment }}
     strategy:
       # matrix: ${{ fromJSON(needs.set-env.outputs.environment) }}
-      matrix: ${{ fromJson(needs.set-matrix.outputs.matrix).include }}
+      matrix: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
       fail-fast: false
     env:
       FOLDER: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.folder || 'all' }}
@@ -187,7 +187,7 @@ jobs:
 
       - name: Deploy
         run: |
-          echo "Deploying to: ${{ matrix.env }}"
+          echo "Environment: ${{ matrix.env }}"
           echo "Image: ${{ matrix.image }}"
-          echo "Build: ${{ matrix.build }}"
+          echo "Build flag: ${{ matrix.build }}"
       
