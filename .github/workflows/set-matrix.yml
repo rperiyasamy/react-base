@@ -176,7 +176,7 @@ jobs:
         
   build:
     needs: [set-matrix]
-    if: ${{ needs.set-env.outputs.environment }}
+    # if: ${{ needs.set-env.outputs.environment }}
     strategy:
       # matrix: ${{ fromJSON(needs.set-env.outputs.environment) }}
       matrix: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
