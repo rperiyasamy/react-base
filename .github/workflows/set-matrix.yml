@@ -19,6 +19,7 @@ on:
           - stg
           - prod
           - dr
+          - preprod
       folder:
         description: 'Select a folder to deploy'
         required: true
