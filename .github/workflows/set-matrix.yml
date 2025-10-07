@@ -82,7 +82,7 @@ jobs:
       
       - name: Set Deployment Matrix
         id: set-matrix
-        uses: rperiyasamy/react-base/.github/set-deployment-matrix
+        uses: ./.github/set-deployment-matrix
         with:
           environment: ${{ github.event.inputs.environment }}
 
