@@ -1,10 +1,15 @@
 name: Set Deployment Matrix
 
 on:
-  # push:
-  #   branches:
-  #     - 'dev'
-  #     - 'main'
+  push:
+    branches:
+      - 'dev'
+      - 'main'
+
+  pull_request:
+    branches:
+      - 'main'
+      - 'dev'
 
   workflow_dispatch:
     inputs:
