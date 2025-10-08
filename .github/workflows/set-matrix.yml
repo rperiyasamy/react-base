@@ -36,6 +36,10 @@ on:
           - python-libraries
           - scripts
           - sql-queries
+          
+env:
+  GRANT_TYPE: authorization_code
+  AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
 
 permissions:
   contents: read
@@ -201,4 +205,9 @@ jobs:
           echo "Environment: ${{ matrix.env }}"
           echo "Image: ${{ matrix.image }}"
           echo "Build flag: ${{ matrix.build }}"
+
+      - name: print env
+        run: |
+          echo "GRANT_TYPE: $GRANT_TYPE"
+          echo "AUTH_PASSWORD: $AUTH_PASSWORD" 
       
