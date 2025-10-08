@@ -37,10 +37,6 @@ on:
           - scripts
           - sql-queries
           
-env:
-  GRANT_TYPE: authorization_code
-  AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
-
 permissions:
   contents: read
   id-token: write
@@ -191,6 +187,8 @@ jobs:
       fail-fast: false
     env:
       FOLDER: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.folder || 'all' }}
+      GRANT_TYPE: authorization_code
+      AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
     runs-on: ubuntu-latest
 
     steps:
