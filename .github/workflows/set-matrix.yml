@@ -90,6 +90,12 @@ jobs:
         uses: ./.github/set-deployment-matrix
         with:
           environment: ${{ github.event.inputs.environment }}
+      - name: print
+        run: |
+          echo "GITHUB_REF: $GITHUB_REF"
+          echo "gthubref: ${{ github.ref }}"
+          echo "Source branch of the PR: ${{ github.head_ref || github.ref }}"
+          echo "Target branch of the PR: ${{ github.base_ref }}"
 
   set-env:
     runs-on: ubuntu-latest
@@ -116,10 +122,7 @@ jobs:
           fi
       - name: print matrix
         run: echo ${{ steps.set.outputs.environment }}
-      - name: print
-        run: |
-          echo "GITHUB_REF: $GITHUB_REF"
-          echo "gthubref: ${{ github.ref }}"
+      
           
   # approval:
   #   needs: [set-env]
