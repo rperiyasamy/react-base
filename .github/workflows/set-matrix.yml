@@ -90,6 +90,10 @@ jobs:
         uses: ./.github/set-deployment-matrix
         with:
           environment: ${{ github.event.inputs.environment }}
+      - name: print
+        run: |
+          echo "GITHUB_REF: $GITHUB_REF"
+          echo "gthubref: ${{ github.ref }}"
 
   set-env:
     runs-on: ubuntu-latest
@@ -116,10 +120,7 @@ jobs:
           fi
       - name: print matrix
         run: echo ${{ steps.set.outputs.environment }}
-      - name: print
-        run: |
-          echo "GITHUB_REF: $GITHUB_REF"
-          echo "gthubref: ${{ github.ref }}"
+      
           
   # approval:
   #   needs: [set-env]
