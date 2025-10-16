@@ -94,6 +94,8 @@ jobs:
         run: |
           echo "GITHUB_REF: $GITHUB_REF"
           echo "gthubref: ${{ github.ref }}"
+          echo "Source branch of the PR: ${{ github.head_ref }}"
+          echo "Target branch of the PR: ${{ github.base_ref }}"
 
   set-env:
     runs-on: ubuntu-latest
