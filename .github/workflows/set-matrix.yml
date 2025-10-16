@@ -112,6 +112,11 @@ jobs:
           fi
       - name: print matrix
         run: echo ${{ steps.set.outputs.environment }}
+      - name: print
+        run: |
+          echo "GITHUB_REF: $GITHUB_REF"
+          echo "gthubref: ${{ github.ref }}"
+          
   # approval:
   #   needs: [set-env]
   #   if: |
