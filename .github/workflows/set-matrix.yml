@@ -94,7 +94,7 @@ jobs:
         run: |
           echo "GITHUB_REF: $GITHUB_REF"
           echo "gthubref: ${{ github.ref }}"
-          echo "Source branch of the PR: ${{ github.head_ref || GITHUB_REF }}"
+          echo "Source branch of the PR: ${{ github.head_ref || $GITHUB_REF }}"
           echo "Target branch of the PR: ${{ github.base_ref }}"
 
   set-env:
