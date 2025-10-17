@@ -1,0 +1,22 @@
+name: Automation Test
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+      aws_region:
+        required: true
+        type: string
+
+jobs:
+  automation-test:
+    name: Automation Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: debug info
+        run: |
+          echo "service_name: ${{ inputs.service_name }}"
+          echo "aws_region: ${{ inputs.aws_region }}"
+          
