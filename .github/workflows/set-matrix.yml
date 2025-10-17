@@ -82,7 +82,7 @@ jobs:
     uses: rperiyasamy/react-base/.github/workflows/test.yaml@main
     with:
       service_name: "ms-patient"
-      aws_region: ${{ vars.aws_region }}
+      aws_region: ${{ vars.AWS_REGION }}
 
   set-matrix:
     runs-on: ubuntu-latest
