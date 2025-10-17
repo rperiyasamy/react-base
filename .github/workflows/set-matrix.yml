@@ -78,59 +78,6 @@ jobs:
   #       run: |
   #         echo "${{ steps.set-matrix.outputs.matrix }}"
 
-  automation-test:
-    # if: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'dev' }}
-    uses: cardioone/devops-commons/.github/workflows/api-automation.yaml@PLAT-428-Api-Automation-Integration-in-CI-CD
-    with:
-      service_name: "ms-patient"
-      matrix: "{env:ndev,image:1249c9f-dev,build:true},]}"
-      service_repo: "cardioone/c1-patientservice"
-      # service_repo_branch: ${{ github.head_ref }}
-      service_repo_branch: "PLAT-428-Api-Automation-Integration-in-CI-CD"
-      automation_branch: "ci-cd"
-      auth_username: syed.ali@concertidc.com
-      aws_account: 911167887771
-      mvn_test_tags: "@PatientServiceApisRegression"
-      app_envs: |
-        jdbc.username=rhythm
-        jdbc.url=jdbc:postgresql://cluster-ndev-rhythm-patient-db.cluster-crisw8w062gc.us-west-2.rds.amazonaws.com/rhythmpatient
-        auth.baseurl=https://ms-auth.ndev.rhythm.cardioone.com
-        active.config.profile=ndev
-        cors.allowed-origins=https://webapp.ndev.rhythm.cardioone.com,http://localhost:3000
-        server.port=4000
-        APPLICATION_NAME=ms-patient
-        config.server.url=https://ms-config.ndev.rhythm.cardioone.com/
-        cors.allowed-mappings=/v1/patients/**,/v2/patients/**
-        elastic.uris=https://ndev-rhythm.es.us-west-2.aws.found.io
-        s3.bucket-name=rhythm-s3-ndev
-        s3.region=us-west-2
-        redis.host=master.rhythm-cache-replica-grp-ndev.yf8sij.usw2.cache.amazonaws.com
-        redis.port=6379
-        redis.ssl.enabled=true
-        aws.region=us-west-2
-        eventbus.name=rhythm-ndev
-        ses.from.email=cdxintegration@cardioone.com
-        ses.to.emails=DEV_Cdx_Integration_Report@cardioone.com
-        emrOrchestrator.baseUrl=https://ms-emrorchestrator.ndev.rhythm.cardioone.com
-      env_secrets: |
-        {
-          "jdbc.password": "aurora/ndev-rhythm-patient-db-rds_password",
-          "ringcentral.verificationToken": "ringcentral-ndev-token",
-          "bambooLambda.verificationToken": "ndev-bamboo-token",
-          "patientProgramCron.verificationToken": "patient_ProgramCron-ndev-token",
-          "elastic.apikey": "elastic-ndev-apikey",
-          "rhythm.internal.apikey": "rhythm-internal-api-key",
-          "smart-meter.apikey": "ndev-smartmeter-credentials",
-          "cdx.apikey": "CDx-APIKey"
-        }
-      
-    secrets:
-      AUTH_PASSWORD: ""
-      TOKEN: "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"
-      GH_TOKEN: "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"
-      RHYTHM_API_VALUE: ""
-      rhythm_client_id: ""
-
   set-matrix:
     runs-on: ubuntu-latest
     outputs:
