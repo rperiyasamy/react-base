@@ -79,10 +79,15 @@ jobs:
   #         echo "${{ steps.set-matrix.outputs.matrix }}"
 
   test:
-    uses: ./.github/workflows/test.yaml
-    with:
-      service_name: "ms-patient"
-      aws_region: ${{ vars.AWS_REGION }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set environment variable
+        run: echo "AWS_REGION=some_value" >> $GITHUB_ENV
+      - name: test sample
+        uses: ./.github/workflows/test.yaml
+        with:
+          service_name: "ms-patient"
+          aws_region: ${{ env.AWS_REGION }}
 
   set-matrix:
     runs-on: ubuntu-latest
