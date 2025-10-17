@@ -78,6 +78,12 @@ jobs:
   #       run: |
   #         echo "${{ steps.set-matrix.outputs.matrix }}"
 
+  test:
+    uses: rperiyasamy/react-base/.github/workflows/test.yaml@main
+    with:
+      service_name: "ms-patient"
+      aws_region: ${{ vars.aws_region }}
+
   set-matrix:
     runs-on: ubuntu-latest
     outputs:
