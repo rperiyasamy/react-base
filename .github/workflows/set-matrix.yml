@@ -48,7 +48,7 @@ jobs:
     steps:
       - name: print 
         run: |
-          echo ${{env.SONAR_HOST_URL}}" > key.txt
+          echo $SONAR_HOST_URL > key.txt
           cat key.txt
           
   # prepare:
