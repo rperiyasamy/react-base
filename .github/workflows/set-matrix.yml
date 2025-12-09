@@ -48,7 +48,9 @@ jobs:
     steps:
       - name: print 
         run: |
-          echo $SONAR_HOST_URL > key.txt
+          echo "first line" >> key.txt
+          echo $SONAR_HOST_URL >> key.txt
+          echo "second line" >> key.txt
           cat key.txt
           
   # prepare:
