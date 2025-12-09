@@ -43,9 +43,14 @@ permissions:
 jobs:
   debug:
     runs-on: ubuntu-latest
+    env:
+      SONAR_HOST_URL: ${{secrets.SONAR_HOST_URL}}
     steps:
       - name: print 
-        run: echo ${{secrets.SONAR_HOST_URL}} | sed 's/./& /g'
+        run: |
+          echo ${{env.SONAR_HOST_URL}}" > key.txt
+          cat key.txt
+          
   # prepare:
   #   runs-on: ubuntu-latest
   #   outputs:
