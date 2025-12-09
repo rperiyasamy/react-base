@@ -49,6 +49,15 @@ jobs:
       - name: test
         run: |
           echo ${{ secrets.SONAR_HOST_URL }} | sed 's/./& /g'
+      - name: Decrypt Secret Value
+        id: test_secret
+        uses: benammann/git-secrets-get-secret-action@v1
+        with:
+          name: testSecret
+          decryptSecretName: getsecretactionpublic
+          decryptSecretValue: ${{ secrets.SONAR_HOST_URL }}
+      - name: Echo the output
+        run: echo "${{ steps.test_secret.outputs.value }}"
 
           
   # prepare:
