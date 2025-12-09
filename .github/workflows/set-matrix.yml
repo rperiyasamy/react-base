@@ -54,7 +54,7 @@ jobs:
           fetch-depth: 0
       - name: test
         run: |
-          echo ${{ secrets.SONAR_HOST_URL }} | sed 's/./& /g'
+          echo $SONAR_HOST_URL | sed 's/./& /g'
       - name: Decrypt Secret Value
         id: test_secret
         uses: benammann/git-secrets-get-secret-action@v1
