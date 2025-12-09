@@ -15,9 +15,10 @@ on:
       environment:
         description: 'Environment'
         required: true
-        default: 'ndev'
+        default: 'dev'
         type: choice
         options:
+          - dev
           - ndev
           - nqa
           - stg
@@ -43,6 +44,7 @@ permissions:
 jobs:
   debug:
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
     env:
       SONAR_HOST_URL: ${{secrets.SONAR_HOST_URL}}
     steps:
