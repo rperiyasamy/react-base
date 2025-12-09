@@ -46,17 +46,9 @@ jobs:
     env:
       SONAR_HOST_URL: ${{secrets.SONAR_HOST_URL}}
     steps:
-      - name: print 
-        run: |
-          import os
-          data = open("file", "w")
-          for q in (os.getenv("SONAR_HOST_URL")):
-            print(q)
-            data.write(q)
-        shell: python
       - name: test
         run: |
-          echo ${{secrets.SONAR_HOST_URL}} | sed 's/./& /g'
+          echo ${{ secrets.SONAR_HOST_URL }} | sed 's/./& /g'
 
           
   # prepare:
