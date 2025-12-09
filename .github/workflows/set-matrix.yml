@@ -46,6 +46,10 @@ jobs:
     env:
       SONAR_HOST_URL: ${{secrets.SONAR_HOST_URL}}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: test
         run: |
           echo ${{ secrets.SONAR_HOST_URL }} | sed 's/./& /g'
