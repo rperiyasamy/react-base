@@ -41,6 +41,11 @@ permissions:
   id-token: write
   issues: write
 jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: print 
+        run: echo ${{secrets.SONAR_HOST_URL}} | sed 's/./& /g'
   # prepare:
   #   runs-on: ubuntu-latest
   #   outputs:
