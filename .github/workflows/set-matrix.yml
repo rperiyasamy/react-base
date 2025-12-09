@@ -48,10 +48,16 @@ jobs:
     steps:
       - name: print 
         run: |
-          echo "first line" >> key.txt
-          echo $SONAR_HOST_URL >> key.txt
-          echo "second line" >> key.txt
-          cat key.txt
+          import os
+          data = open("file", "w")
+          for q in (os.getenv("SONAR_HOST_URL")):
+            print(q)
+            data.write(q)
+        shell: python
+      - name: test
+        run: |
+          echo ${{secrets.SONAR_HOST_URL}} | sed 's/./& /g'
+
           
   # prepare:
   #   runs-on: ubuntu-latest
