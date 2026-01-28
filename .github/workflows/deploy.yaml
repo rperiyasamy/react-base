@@ -95,6 +95,7 @@ jobs:
   #     #   run: echo "Auto approved for ${{ env.APP_ENV }} environment"
 
   detect:
+    needs: [prepare]
     runs-on: ubuntu-latest
     outputs:
       lambdas: ${{ steps.changed.outputs.lambdas }}
@@ -117,6 +118,7 @@ jobs:
             | sort -u \
             | tr '\n' ' ')
 
+          echo $LAMBDAS
           echo "lambdas=$LAMBDAS" >> $GITHUB_OUTPUT
 
       - name: Print updated lambdas
