@@ -1,9 +1,9 @@
 name: Build and Release Android App
 
 on:
-  # push:
-  #   branches:
-  #     - 'dev'
+  push:
+    branches:
+      - 'dev'
   #     - 'main'
   
   # pull_request:
@@ -94,8 +94,39 @@ jobs:
   #     #   if: ${{ env.APP_ENV != 'prod' }}
   #     #   run: echo "Auto approved for ${{ env.APP_ENV }} environment"
 
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      lambdas: ${{ steps.changed.outputs.lambdas }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: changed
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE=origin/${{ github.base_ref }}
+          else
+            BASE=HEAD~1
+          fi
+
+          LAMBDAS=$(git diff --name-only $BASE HEAD \
+            | grep '^lambda_functions/' \
+            | awk -F/ '{print $2}' \
+            | sort -u \
+            | tr '\n' ' ')
+
+          echo "lambdas=$LAMBDAS" >> $GITHUB_OUTPUT
+
+      - name: Force fail
+        run: |
+          echo "Something is wrong"
+          exit 1
+
+
   build:
-    needs: [prepare]
+    needs: [prepare, detect]
     if: ${{ needs.prepare.outputs.matrix != '' }}
     runs-on: ubuntu-latest
     strategy:
