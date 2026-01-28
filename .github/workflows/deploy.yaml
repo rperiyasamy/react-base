@@ -95,7 +95,6 @@ jobs:
   #     #   run: echo "Auto approved for ${{ env.APP_ENV }} environment"
 
   detect:
-    needs: [prepare]
     runs-on: ubuntu-latest
     outputs:
       lambdas: ${{ steps.changed.outputs.lambdas }}
@@ -106,26 +105,22 @@ jobs:
 
       - id: changed
         run: |
+          # Determine base for diff
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             BASE=origin/${{ github.base_ref }}
           else
             BASE=HEAD~1
           fi
 
+          # Get all changed files under lambda_functions/
           LAMBDAS=$(git diff --name-only $BASE HEAD \
             | grep '^lambda_functions/' \
-            | awk -F/ '{print $2}' \
+            | cut -d/ -f2 \
             | sort -u \
             | tr '\n' ' ')
 
-          echo $LAMBDAS
+          echo "Detected changed lambdas: $LAMBDAS"
           echo "lambdas=$LAMBDAS" >> $GITHUB_OUTPUT
-
-      - name: Print updated lambdas
-        run: |
-          echo "Updated lambdas:"
-          echo "${{ needs.detect.outputs.lambdas }}"
-
 
       - name: Force fail
         run: |
