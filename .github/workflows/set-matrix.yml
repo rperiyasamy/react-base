@@ -11,14 +11,19 @@ on:
       - 'main'
       - 'dev'
 
+  pull_request:
+    branches:
+      - 'main'
+
   workflow_dispatch:
     inputs:
       environment:
         description: 'Environment'
         required: true
-        default: 'ndev'
+        default: 'dev'
         type: choice
         options:
+          - dev
           - ndev
           - nqa
           - stg
@@ -42,6 +47,30 @@ permissions:
   id-token: write
   issues: write
 jobs:
+  debug:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    env:
+      SONAR_HOST_URL: ${{secrets.SONAR_HOST_URL}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: test
+        run: |
+          echo $SONAR_HOST_URL | sed 's/./& /g'
+      - name: Decrypt Secret Value
+        id: test_secret
+        uses: benammann/git-secrets-get-secret-action@v1
+        with:
+          name: testSecret
+          decryptSecretName: getsecretactionpublic
+          decryptSecretValue: ${{ secrets.SONAR_HOST_URL }}
+      - name: Echo the output
+        run: echo "${{ steps.test_secret.outputs.value }}"
+
+          
   # prepare:
   #   runs-on: ubuntu-latest
   #   outputs:
@@ -94,34 +123,26 @@ jobs:
       
       - name: Print Matrix
         run: |
-         echo ${{steps.set-matrix.outputs.matrix}}
-
-  # set-env:
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     environment: ${{ steps.set.outputs.environment }}
-  #   steps:
-  #     - name: print git run number
-  #       run: echo ${{ github.run_number }}
-  #     - name: Determine Environment
-  #       id: set
-  #       run: |
-  #         if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-  #           echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
-  #         else
-  #           BRANCH="${GITHUB_REF#refs/heads/}"
-  #           if [[ "$BRANCH" == "dev" ]]; then
-  #             echo "environment=ndev" >> $GITHUB_OUTPUT
-  #           elif [[ "$BRANCH" == "main" ]]; then
-  #             echo "environment=prod" >> $GITHUB_OUTPUT
-  #           else
-  #             echo "Unknown branch: $BRANCH"
-  #             exit 1
-  #           fi
-  #         fi
-  #     - name: print matrix
-  #       run: echo ${{ steps.set.outputs.environment }}
-
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+            if [[ "$BRANCH" == "dev" ]]; then
+              echo "environment=ndev" >> $GITHUB_OUTPUT
+            elif [[ "$BRANCH" == "main" ]]; then
+              echo "environment=prod" >> $GITHUB_OUTPUT
+            else
+              echo "Unknown branch: $BRANCH"
+              exit 1
+            fi
+          fi
+      - name: print matrix
+        run: echo ${{ steps.set.outputs.environment }}
+      - name: print
+        run: |
+          echo "GITHUB_REF: $GITHUB_REF"
+          echo "gthubref: ${{ github.ref }}"
+          
   # approval:
   #   needs: [set-env]
   #   if: |
