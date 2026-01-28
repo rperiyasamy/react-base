@@ -105,28 +105,41 @@ jobs:
 
       - id: changed
         run: |
-          # Determine base for diff
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             BASE=origin/${{ github.base_ref }}
           else
             BASE=HEAD~1
           fi
 
-          # Get all changed files under lambda_functions/
+          # Get unique first-level lambda folder names
           LAMBDAS=$(git diff --name-only $BASE HEAD \
             | grep '^lambda_functions/' \
             | cut -d/ -f2 \
-            | sort -u \
-            | tr '\n' ' ')
+            | sort -u)
 
-          echo "Detected changed lambdas: $LAMBDAS"
-          echo "lambdas=$LAMBDAS" >> $GITHUB_OUTPUT
+          # Convert to JSON array
+          LAMBDAS_JSON=$(printf '%s\n' $LAMBDAS | jq -R -s -c 'split("\n")[:-1]')
 
+          echo "Detected lambdas JSON: $LAMBDAS_JSON"
+          echo "lambdas=$LAMBDAS_JSON" >> $GITHUB_OUTPUT
+      
       - name: Force fail
         run: |
           echo "Something is wrong"
           exit 1
 
+  build-lambda:
+  needs: detect
+  runs-on: ubuntu-latest
+  strategy:
+    matrix:
+      lambda: ${{ fromJSON(needs.detect.outputs.lambdas) }}
+  steps:
+    - uses: actions/checkout@v4
+    - name: Build Lambda ${{ matrix.lambda }}
+      run: |
+        LAMBDA_DIR="lambda_functions/${{ matrix.lambda }}"
+        echo $LAMBDA_DIR
 
   build:
     needs: [prepare, detect]
