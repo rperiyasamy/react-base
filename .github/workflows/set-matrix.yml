@@ -1,10 +1,15 @@
 name: Set Deployment Matrix
 
 on:
-  # push:
-  #   branches:
-  #     - 'dev'
-  #     - 'main'
+  push:
+    branches:
+      - 'dev'
+      - 'main'
+
+  pull_request:
+    branches:
+      - 'main'
+      - 'dev'
 
   pull_request:
     branches:
@@ -36,7 +41,7 @@ on:
           - python-libraries
           - scripts
           - sql-queries
-
+          
 permissions:
   contents: read
   id-token: write
@@ -115,16 +120,8 @@ jobs:
         uses: ./.github/set-deployment-matrix
         with:
           environment: ${{ github.event.inputs.environment }}
-
-  set-env:
-    runs-on: ubuntu-latest
-    outputs:
-      environment: ${{ steps.set.outputs.environment }}
-    steps:
-      - name: print git run number
-        run: echo ${{ github.run_number }}
-      - name: Determine Environment
-        id: set
+      
+      - name: Print Matrix
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
@@ -203,14 +200,16 @@ jobs:
   #       run: echo "Auto approved for ${{ matrix.env }} environment"
         
   build:
-    needs: [set-env, set-matrix]
-    if: ${{ needs.set-env.outputs.environment }}
+    needs: [set-matrix]
+    # if: ${{ needs.set-env.outputs.environment }}
     strategy:
       # matrix: ${{ fromJSON(needs.set-env.outputs.environment) }}
       matrix: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
       fail-fast: false
     env:
       FOLDER: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.folder || 'all' }}
+      GRANT_TYPE: authorization_code
+      AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD }}
     runs-on: ubuntu-latest
 
     steps:
@@ -225,4 +224,9 @@ jobs:
           echo "Environment: ${{ matrix.env }}"
           echo "Image: ${{ matrix.image }}"
           echo "Build flag: ${{ matrix.build }}"
+
+      - name: print env
+        run: |
+          echo "GRANT_TYPE: $GRANT_TYPE"
+          echo "AUTH_PASSWORD: $AUTH_PASSWORD" 
       

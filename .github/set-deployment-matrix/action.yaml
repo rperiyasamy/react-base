@@ -1,5 +1,5 @@
 name: "Set Deployment Matrix"
-description: "Generates a deployment matrix based on event type and optional build name"
+description: "Generates a deployment matrix based on environment and build name"
 
 inputs:
   build_name:
@@ -48,7 +48,7 @@ runs:
               refs/heads/main)  ENV="prod";  IMAGE="$SHA-prod";  BUILD=false ;;
             esac ;;
           pull_request)
-            if [[ "${{ github.event.pull_request.base.ref }}" == "main" ]]; then
+            if [[ "${{ github.event.pull_request.base.ref }}" == "main" || "${{ github.event.pull_request.base.ref }}" == "dev" ]]; then
               ENV="pr"; IMAGE="$SHA"; BUILD=false
             fi ;;
           workflow_dispatch)
@@ -60,10 +60,6 @@ runs:
                 IMAGE="latest"
                 BUILD=false ;;
             esac ;;
-          release)
-            if [[ "${{ github.event.action }}" == "published" ]]; then
-              ENV="prod"; IMAGE="${{ github.event.release.tag_name }}"; BUILD=true
-            fi ;;
         esac
 
         if [[ -n "${ENV:-}" && -n "${IMAGE:-}" ]]; then
