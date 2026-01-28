@@ -119,6 +119,12 @@ jobs:
 
           echo "lambdas=$LAMBDAS" >> $GITHUB_OUTPUT
 
+      - name: Print updated lambdas
+        run: |
+          echo "Updated lambdas:"
+          echo "${{ needs.detect.outputs.lambdas }}"
+
+
       - name: Force fail
         run: |
           echo "Something is wrong"
