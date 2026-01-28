@@ -137,9 +137,9 @@ jobs:
           echo $LAMBDA_DIR
 
       - name: Force fail
-          run: |
-            echo "Something is wrong"
-            exit 1
+        run: |
+          echo "Something is wrong"
+          exit 1
 
   build:
     needs: [prepare, detect]
