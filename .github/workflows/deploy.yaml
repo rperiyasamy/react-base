@@ -130,13 +130,14 @@ jobs:
     strategy:
       matrix:
         lambda: ${{ fromJSON(needs.detect.outputs.lambdas) }}
-        include: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+        env: ${{ fromJSON(needs.prepare.outputs.matrix).include[*].env }}
     steps:
       - uses: actions/checkout@v4
-      - name: Build Lambda ${{ matrix.lambda }} ${{ matrix.include.image }}
+      - name: Build Lambda ${{ matrix.lambda }} for ${{ matrix.env }}
         run: |
           LAMBDA_DIR="lambda_functions/${{ matrix.lambda }}"
           echo $LAMBDA_DIR
+          echo "Environment: ${{ matrix.env }}"
 
   build:
     needs: [prepare, build-lambda]
