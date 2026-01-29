@@ -136,11 +136,6 @@ jobs:
           LAMBDA_DIR="lambda_functions/${{ matrix.lambda }}"
           echo $LAMBDA_DIR
 
-      - name: Force fail
-        run: |
-          echo "Something is wrong"
-          exit 1
-
   build:
     needs: [prepare, build-lambda]
     if: ${{ needs.prepare.outputs.matrix != '' }}
@@ -152,6 +147,11 @@ jobs:
       ECG_INPUT: ${{ github.event.inputs.ECG || 'false' }}
       
     steps:
+      - name: Force fail
+        run: |
+          echo "Something is wrong"
+          exit 1
+          
       - name: Print data from prepare for debug
         run: |
           echo ${{ matrix.release }}
