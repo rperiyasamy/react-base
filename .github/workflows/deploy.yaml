@@ -142,7 +142,7 @@ jobs:
           exit 1
 
   build:
-    needs: [prepare, detect]
+    needs: [prepare, build-lambda]
     if: ${{ needs.prepare.outputs.matrix != '' }}
     runs-on: ubuntu-latest
     strategy:
