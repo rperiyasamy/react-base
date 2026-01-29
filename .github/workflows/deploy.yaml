@@ -124,12 +124,13 @@ jobs:
           echo "lambdas=$LAMBDAS_JSON" >> $GITHUB_OUTPUT
 
   build-lambda:
-    needs: [detect]
+    needs: [detect, prepare]
     runs-on: ubuntu-latest
+    if: needs.detect.outputs.lambdas != '[]'
     strategy:
       matrix:
         lambda: ${{ fromJSON(needs.detect.outputs.lambdas) }}
-        # include: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+        include: ${{ fromJSON(needs.prepare.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v4
       - name: Build Lambda ${{ matrix.lambda }} ${{ matrix.include.image }}
