@@ -129,9 +129,10 @@ jobs:
     strategy:
       matrix:
         lambda: ${{ fromJSON(needs.detect.outputs.lambdas) }}
+        include: ${{ fromJSON(needs.prepare.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v4
-      - name: Build Lambda ${{ matrix.lambda }}
+      - name: Build Lambda ${{ matrix.lambda }} ${{ matrix.include.image }}
         run: |
           LAMBDA_DIR="lambda_functions/${{ matrix.lambda }}"
           echo $LAMBDA_DIR
@@ -151,7 +152,7 @@ jobs:
         run: |
           echo "Something is wrong"
           exit 1
-          
+
       - name: Print data from prepare for debug
         run: |
           echo ${{ matrix.release }}
