@@ -175,7 +175,8 @@ jobs:
       - approval
     if: ${{ needs.prepare.outputs.matrix != '' }}
     strategy:
-      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+      lambda: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.lambda != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.lambda))) || fromJSON(needs.find-modified-lambdas.outputs.lambdas) }}
+      layer: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.layer != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.layer))) || fromJSON(needs.find-modified-lambdas.outputs.layers) }}
       fail-fast: false
     runs-on: ubuntu-latest
     outputs:
