@@ -178,13 +178,13 @@ jobs:
       matrix:
         include: ${{ 
           github.event_name == 'workflow_dispatch' && (
-            github.event.inputs.lambda != 'None' && fromJSON(format('[{{"type":"lambda","name":"{0}","env":"{1}","image":"{2}"}}]', github.event.inputs.lambda, fromJSON(needs.prepare.outputs.matrix).include[0].env, fromJSON(needs.prepare.outputs.matrix).include[0].image))
-            || github.event.inputs.layer != 'None' && fromJSON(format('[{{"type":"layer","name":"{0}","env":"{1}","image":"{2}"}}]', github.event.inputs.layer, fromJSON(needs.prepare.outputs.matrix).include[0].env, fromJSON(needs.prepare.outputs.matrix).include[0].image))
+            github.event.inputs.lambda != 'None' && fromJSON(format('[{"type":"lambda","name":"{0}","env":"{1}","image":"{2}"}]', github.event.inputs.lambda, fromJSON(needs.prepare.outputs.matrix).include[0].env, fromJSON(needs.prepare.outputs.matrix).include[0].image))
+            || github.event.inputs.layer != 'None' && fromJSON(format('[{"type":"layer","name":"{0}","env":"{1}","image":"{2}"}]', github.event.inputs.layer, fromJSON(needs.prepare.outputs.matrix).include[0].env, fromJSON(needs.prepare.outputs.matrix).include[0].image))
             || fromJSON('[]')
           ) || (
-            needs.find-modified-lambdas.outputs.lambdas != 'None' && needs.find-modified-lambdas.outputs.layers != 'None' && fromJSON(format('[{{"type":"lambda","name":"{0}","env":"{1}","image":"{2}"}},{{"type":"layer","name":"{3}","env":"{1}","image":"{2}"}}]', fromJSON(needs.find-modified-lambdas.outputs.lambdas)[0], fromJSON(needs.prepare.outputs.matrix).include[0].env, fromJSON(needs.prepare.outputs.matrix).include[0].image, fromJSON(needs.find-modified-lambdas.outputs.layers)[0]))
-            || needs.find-modified-lambdas.outputs.lambdas != 'None' && fromJSON(format('[{{"type":"lambda","name":"{0}","env":"{1}","image":"{2}"}}]', fromJSON(needs.find-modified-lambdas.outputs.lambdas)[0], fromJSON(needs.prepare.outputs.matrix).include[0].env, fromJSON(needs.prepare.outputs.matrix).include[0].image))
-            || needs.find-modified-lambdas.outputs.layers != 'None' && fromJSON(format('[{{"type":"layer","name":"{0}","env":"{1}","image":"{2}"}}]', fromJSON(needs.find-modified-lambdas.outputs.layers)[0], fromJSON(needs.prepare.outputs.matrix).include[0].env, fromJSON(needs.prepare.outputs.matrix).include[0].image))
+            needs.find-modified-lambdas.outputs.lambdas != 'None' && needs.find-modified-lambdas.outputs.layers != 'None' && fromJSON(format('[{"type":"lambda","name":"{0}","env":"{1}","image":"{2}"},{"type":"layer","name":"{3}","env":"{1}","image":"{2}"}]', fromJSON(needs.find-modified-lambdas.outputs.lambdas)[0], fromJSON(needs.prepare.outputs.matrix).include[0].env, fromJSON(needs.prepare.outputs.matrix).include[0].image, fromJSON(needs.find-modified-lambdas.outputs.layers)[0]))
+            || needs.find-modified-lambdas.outputs.lambdas != 'None' && fromJSON(format('[{"type":"lambda","name":"{0}","env":"{1}","image":"{2}"}]', fromJSON(needs.find-modified-lambdas.outputs.lambdas)[0], fromJSON(needs.prepare.outputs.matrix).include[0].env, fromJSON(needs.prepare.outputs.matrix).include[0].image))
+            || needs.find-modified-lambdas.outputs.layers != 'None' && fromJSON(format('[{"type":"layer","name":"{0}","env":"{1}","image":"{2}"}]', fromJSON(needs.find-modified-lambdas.outputs.layers)[0], fromJSON(needs.prepare.outputs.matrix).include[0].env, fromJSON(needs.prepare.outputs.matrix).include[0].image))
             || fromJSON('[]')
           )
         }}
