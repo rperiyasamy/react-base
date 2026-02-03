@@ -1,100 +1,104 @@
-name: Build and Release Android App
+name: Build and deploy API-Automation lambdas
 
 on:
-  push:
-    branches:
-      - 'dev'
-  #     - 'main'
-  
-  # pull_request:
-  #   branches:
-  #     - 'main'
-  #     - 'dev'
+ push:
+   branches:
+     - 'dev'
+#      - 'main'
 
   workflow_dispatch:
     inputs:
       environment:
         type: choice
-        description: 'Release'
+        description: 'Environment'
         required: true
-        default: 'qa'
+        default: 'dev'
         options:
-          - dev
-          - qa
           - prod
-      ECG:
-        type: boolean
-        description: 'Enable ECG'
+          - dev
+          - nqa
+      lambda:
+        type: choice
+        description: 'Lambda function (Select only if deploying a Lambda function)'
         required: false
-        default: false
+        default: 'None'
+        options:
+          - None
+          - patient-create-automation
+          - patient-documents-reports
+          - hl7parser-automation
+          - patient-documentation-automation
+          - patient-search
+          - patient-insurance-automation
+          - patient-upload-document
+          - patient-claim-automation
+          - patient-multiple-automation
 
+      layer:
+        type: choice
+        description: 'Lambda Layer (Select only if deploying a Layer)'
+        required: false
+        default: 'None'
+        options:
+          - None
+          - config_and_error_layer
+          - powertool-layer
+          - request_oauth_layer
+
+env:
+  SERVICE: lambdas
+  
 permissions:
   contents: read
-  pull-requests: write
   id-token: write
   issues: write
-
+  
 jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
-    
     steps:
+      - name: Generate image tag
+        run: |
+          echo "SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
       - name: Set Matrix
         id: set-matrix
         run: |
           {
+           # deploy from dev branch to dev
+          if [[ ${GITHUB_REF} == 'refs/heads/dev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
             echo "matrix<<EOF"
-            if [[ ${GITHUB_REF} == 'refs/heads/dev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-              echo '{"include":[{"env":"dev"}]}'
-            elif [[ ${GITHUB_REF} == 'refs/heads/main' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-              echo '{"include":[{"env":"prod"}]}'
-            elif [[ ${{ github.event_name }} == 'workflow_dispatch' ]]; then
-              echo '{"include":[{"env":"${{ github.event.inputs.environment }}"}]}'
-            else
-              echo '{"include":[{"env":"dev"}]}'
-            fi
-            echo "EOF"
+            echo "{\"include\":[{\"env\":\"ndev\",\"image\":\"${{env.SHA}}-dev\",\"build\":true}]}"
+          elif [[ ${GITHUB_REF} == 'refs/heads/prod' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
+            echo "{\"include\":[{\"env\":\"dev\",\"image\":\"${{env.SHA}}-prod\",\"build\":true}]}"
+          elif [[ ${{ github.event_name }} == 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
+            echo "{\"include\":["
+              if [[ "${{ github.event.inputs.environment }}" == 'dev' ]]; then
+                echo "{\"env\":\"ndev\",\"image\":\"${{env.SHA}}-dev\",\"build\":true},"
+              elif [[ "${{ github.event.inputs.environment }}" == 'prod' ]]; then
+                echo "{\"env\":\"dev\",\"image\":\"${{env.SHA}}-prod\",\"build\":false},"
+              elif [[ "${{ github.event.inputs.environment }}" == 'nqa' ]]; then
+                echo "{\"env\":\"nqa\",\"image\":\"${{env.SHA}}-nqa\",\"build\":false},"
+              else
+                echo "{\"env\":\"${environment}\",\"image\":\"latest\"},"
+              fi
+            echo "]}"
+          else
+            echo "matrix<<EOF"
+            echo ""
+          fi
+          echo EOF
           } >> $GITHUB_OUTPUT
-      - name: Print Matrix
+      - name: Echo Matrix
         run: |
-         echo ${{steps.set-matrix.outputs.matrix}}
-    
+          echo "${{ steps.set-matrix.outputs.matrix }}"
 
-  # approval:
-  #   needs: [prepare]
-  #   runs-on: ubuntu-latest
-  #   environment: 'prod'
-  #   env:
-  #     APP_ENV: 'prod'
-  #     APPROVERS: ${{ vars.APPROVERS }}
-  #   steps:
-  #     - name: debug env from vars
-  #       run: |
-  #         echo "APPROVERS=${{ vars.APPROVERS }}"
-  #     - name: debug env
-  #       run: |
-  #         echo "APPROVERS=${{ env.APPROVERS }}"
-  #     - name: approve-prod-deployment
-  #       if: ${{ env.APP_ENV == 'prod' }}
-  #       uses: trstringer/manual-approval@v1
-  #       timeout-minutes: 30
-  #       with:
-  #         secret: ${{ github.TOKEN }}
-  #         approvers: ${{ vars.APPROVERS }}
-  #         minimum-approvals: 1
-  #         issue-title: "Deploying ETL Glue job scripts to ${{ env.APP_ENV }}"
-
-  #     - name: Approval Received
-  #       if: ${{ env.APP_ENV == 'prod' }}
-  #       run: echo "Approval for deploying ETL Glue job scripts to ${{ env.APP_ENV }} was received"
-
-  #     # - name: Auto approve for non-prod environments
-  #     #   if: ${{ env.APP_ENV != 'prod' }}
-  #     #   run: echo "Auto approved for ${{ env.APP_ENV }} environment"
-
-  detect:
+  find-modified-lambdas:
+    needs: prepare
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     outputs:
       lambdas: ${{ steps.changed.outputs.lambdas }}
@@ -123,76 +127,24 @@ jobs:
           echo "Detected lambdas JSON: $LAMBDAS_JSON"
           echo "lambdas=$LAMBDAS_JSON" >> $GITHUB_OUTPUT
 
-  build-lambda:
-    needs: [detect, prepare]
+  approval:
+    needs: [prepare]
     runs-on: ubuntu-latest
-    if: needs.detect.outputs.lambdas != '[]'
-    strategy:
-      matrix:
-        lambda: ${{ fromJSON(needs.detect.outputs.lambdas) }}
-        env: ${{ fromJSON(needs.prepare.outputs.matrix).include[*].env }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build Lambda ${{ matrix.lambda }} for ${{ matrix.env }}
-        run: |
-          LAMBDA_DIR="lambda_functions/${{ matrix.lambda }}"
-          echo $LAMBDA_DIR
-          echo "Environment: ${{ matrix.env }}"
-
-  build:
-    needs: [prepare, build-lambda]
     if: ${{ needs.prepare.outputs.matrix != '' }}
-    runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
-      fail-fast: false
-    env:
-      ECG_INPUT: ${{ github.event.inputs.ECG || 'false' }}
-      
+    environment: ${{ matrix.env }} 
     steps:
-      - name: Force fail
-        run: |
-          echo "Something is wrong"
-          exit 1
+      - name: approve-prod-deployment
+        if: ${{ matrix.env == 'prod' }}
+        uses: trstringer/manual-approval@v1
+        timeout-minutes: 30
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: ${{ vars.APPROVERS }}
+          minimum-approvals: 1
+          issue-title: "Deploying c1-providerservice to ${{ matrix.env }}"
 
-      - name: Print data from prepare for debug
-        run: |
-          echo ${{ matrix.release }}
-
-      - name: Decide APK name
-        if: "${{ matrix.env == 'dev' || matrix.env == 'stage'}}"
-        id: apk
-        run: |
-          # ECG_INPUT="${{ github.event.inputs.ECG || 'false' }}"
-          ECG_INPUT=${{ env.ECG_INPUT }}
-          if [ "${{ matrix.env }}" = "dev" ] && [ "$ECG_INPUT" = "false" ]; then
-            apk_path="app/build/outputs/apk/debug/app-debug.apk"
-          elif [ "${{ matrix.env }}" = "dev" ] && [ "$ECG_INPUT" = "true" ]; then
-            apk_path="app/build/outputs/apk/debugECG/app-debugECG.apk"
-          elif [ "${{ matrix.env }}" = "stage" ] && [ "$ECG_INPUT" = "false" ]; then
-            apk_path="app/build/outputs/apk/stage/app-stage.apk"
-          elif [ "${{ matrix.env }}" = "stage" ] && [ "$ECG_INPUT" = "true" ]; then
-            apk_path="app/build/outputs/apk/stageECG/app-stageECG.apk"
-          else
-            echo "Unknown environment: ${{ matrix.env }}"
-            exit 1
-          fi
-          echo $apk_path
-          echo "apk_path=$apk_path" >> $GITHUB_OUTPUT
-          
-      - name: Generate release notes
-        run: |
-          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
-          echo "- ${{ github.event.head_commit.message }} (${{ github.actor }}, ${SHORT_SHA})"
-          # echo "- ${GITHUB_EVENT_HEAD_COMMIT_MESSAGE} (${GITHUB_ACTOR}, $SHORT_SHA)" > release-notes.txt
-
-      - name: print ECG
-        if: "${{ matrix.env == 'dev' && env.ECG_INPUT == 'false' }}"
-        run: | 
-          echo ${{ github.event.inputs.ECG }}
-      - name: ecg condition
-        if: ${{ github.event.inputs.ECG == 'true' }}
-        run: echo "ECG - Enabled"
-
-      
-      
+      - name: Approval Received
+        if: ${{ matrix.env == 'prod' }}
+        run: echo "Approval for deploying c1-providerservice to ${{ matrix.env }} was received"
