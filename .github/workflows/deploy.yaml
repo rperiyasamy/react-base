@@ -176,17 +176,17 @@ jobs:
     if: ${{ needs.prepare.outputs.matrix != '' }}
     strategy:
       matrix:
-        include: ${{ 
-          github.event_name == 'workflow_dispatch' && (
-            github.event.inputs.lambda != 'None' && fromJSON(format('[{"type":"lambda","name":"{0}","env":"{1}","image":"{2}"}]', github.event.inputs.lambda, fromJSON(needs.prepare.outputs.matrix).include[0].env, fromJSON(needs.prepare.outputs.matrix).include[0].image))
-            || github.event.inputs.layer != 'None' && fromJSON(format('[{"type":"layer","name":"{0}","env":"{1}","image":"{2}"}]', github.event.inputs.layer, fromJSON(needs.prepare.outputs.matrix).include[0].env, fromJSON(needs.prepare.outputs.matrix).include[0].image))
-            || fromJSON('[]')
-          ) || (
-            needs.find-modified-lambdas.outputs.lambdas != 'None' && needs.find-modified-lambdas.outputs.layers != 'None' && fromJSON(format('[{"type":"lambda","name":"{0}","env":"{1}","image":"{2}"},{"type":"layer","name":"{3}","env":"{1}","image":"{2}"}]', fromJSON(needs.find-modified-lambdas.outputs.lambdas)[0], fromJSON(needs.prepare.outputs.matrix).include[0].env, fromJSON(needs.prepare.outputs.matrix).include[0].image, fromJSON(needs.find-modified-lambdas.outputs.layers)[0]))
-            || needs.find-modified-lambdas.outputs.lambdas != 'None' && fromJSON(format('[{"type":"lambda","name":"{0}","env":"{1}","image":"{2}"}]', fromJSON(needs.find-modified-lambdas.outputs.lambdas)[0], fromJSON(needs.prepare.outputs.matrix).include[0].env, fromJSON(needs.prepare.outputs.matrix).include[0].image))
-            || needs.find-modified-lambdas.outputs.layers != 'None' && fromJSON(format('[{"type":"layer","name":"{0}","env":"{1}","image":"{2}"}]', fromJSON(needs.find-modified-lambdas.outputs.layers)[0], fromJSON(needs.prepare.outputs.matrix).include[0].env, fromJSON(needs.prepare.outputs.matrix).include[0].image))
-            || fromJSON('[]')
+        # lambda: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.lambda != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.lambda))) || (needs.find-modified-lambdas.outputs.lambdas == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.lambdas)) }}
+        # layer: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.layer != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.layer))) || (needs.find-modified-lambdas.outputs.layers == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.layers)) }}
+        item: ${{ 
+          github.event_name == 'workflow_dispatch'
+          && (
+            github.event.inputs.lambda != 'None'
+            && fromJSON(format('[{"type":"lambda","name":"%s"}]', github.event.inputs.lambda))
+            || github.event.inputs.layer != 'None'
+            && fromJSON(format('[{"type":"layer","name":"%s"}]', github.event.inputs.layer))
           )
+          || fromJSON(needs.find-modified-lambdas.outputs.items)
         }}
       fail-fast: false
     runs-on: ubuntu-latest
@@ -195,8 +195,8 @@ jobs:
       BUILD_TARGET: ${{ steps.set-path.outputs.BUILD_TARGET }}
     environment: ${{ matrix.env }}
     env:
-      IMAGE_TAG: ${{ matrix.image }}
-      APP_ENV: ${{ matrix.env }}
+      IMAGE_TAG: ${{ needs.prepare.outputs.matrix != '' && fromJSON(needs.prepare.outputs.matrix)[0].image || 'latest' }}
+      APP_ENV: ${{ needs.prepare.outputs.matrix != '' && fromJSON(needs.prepare.outputs.matrix)[0].env || 'ndev' }}
       
     steps:
       - name: Checkout
@@ -211,42 +211,116 @@ jobs:
       #     output-credentials: true
       #     aws-region: ${{ vars.AWS_REGION }}
 
+      # - name: Determine Build Path
+      #   id: set-path
+      #   run: |
+      #     # For workflow_dispatch
+      #     if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+      #       echo "Detected manual trigger via workflow_dispatch."
+      #       if [[ "${{ github.event.inputs.lambda }}" != "None" && "${{ github.event.inputs.layer }}" != "None" ]]; then
+      #         echo "Error: You must select either 'lambda' OR 'layer', not both."
+      #         exit 1
+      #       elif [[ "${{ github.event.inputs.lambda }}" != "None" ]]; then
+      #         BUILD_PATH="root/lambda_functions/${{ github.event.inputs.lambda }}"
+      #         BUILD_TARGET="${{ github.event.inputs.lambda }}"
+      #       elif [[ "${{ github.event.inputs.layer }}" != "None" ]]; then
+      #         BUILD_PATH="root/layers/${{ github.event.inputs.layer }}"
+      #         BUILD_TARGET="${{ github.event.inputs.layer }}"
+      #       else
+      #         echo "Error: You must select either a 'lambda' or a 'layer' to proceed."
+      #         exit 1
+      #       fi
+      #     # For automated push (detected lambda from matrix)
+      #     else
+      #       echo "Detected automated trigger via push."
+      #       echo "Matrix lambda: ${{ matrix.lambda }}"
+      #       BUILD_PATH="root/lambda_functions/${{ matrix.lambda }}"
+      #       BUILD_TARGET="${{ matrix.lambda }}"
+      #     fi
+          
+      #     echo "BUILD_PATH=${BUILD_PATH}" >> $GITHUB_ENV
+      #     echo "BUILD_TARGET=${BUILD_TARGET}" >> $GITHUB_ENV
+      #     echo "BUILD_PATH=${BUILD_PATH}" >> $GITHUB_OUTPUT
+      #     echo "BUILD_TARGET=${BUILD_TARGET}" >> $GITHUB_OUTPUT
+          
+      #     echo "BUILD_PATH: ${BUILD_PATH}"
+      #     echo "BUILD_TARGET: ${BUILD_TARGET}"
+
+      # - name: Check for lambdas or layers to build
+      #   run: |
+      #     if [[ "${{ matrix.lambda }}" == "None" && "${{ matrix.layer }}" == "None" ]]; then
+      #       echo "No lambdas or layers to build. Exiting."
+      #       exit 0
+      #     fi
+
+      # - name: Zip Lambda Layer Code
+      #   if: ${{ env.APP_ENV == 'ndev' }}
+      #   run: |
+      #     cd ${{ env.BUILD_PATH }}
+      #     echo ${{ env.BUILD_PATH }}
+      #     zip -r ${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip . -x ".*"
+      #     if [ ! -f "${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip" ]; then
+      #       echo "Error: Zip file was not created successfully."
+      #       exit 1
+      #     fi
+      # - name: Upload Build Artifacts to S3
+      #   if: ${{ env.APP_ENV == 'ndev' }}
+      #   run: |
+      #     cd ${{ env.BUILD_PATH }}
+      #     pwd
+      #     # aws s3 cp ${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip s3://${{ vars.ARTIFACTS_BUCKET }}/lambda-builds/${{ env.BUILD_TARGET }}/${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip
+
       - name: Determine Build Path
         id: set-path
         run: |
-          if [[ "${{ matrix.type }}" == "lambda" ]]; then
-            BUILD_PATH="root/lambda_functions/${{ matrix.name }}"
-            BUILD_TARGET="${{ matrix.name }}"
-          elif [[ "${{ matrix.type }}" == "layer" ]]; then
-            BUILD_PATH="root/layers/${{ matrix.name }}"
-            BUILD_TARGET="${{ matrix.name }}"
+          echo "Build item type: ${{ matrix.item.type }}"
+          echo "Build item name: ${{ matrix.item.name }}"
+
+          if [[ "${{ matrix.item.type }}" == "lambda" ]]; then
+            BUILD_PATH="root/lambda_functions/${{ matrix.item.name }}"
+            BUILD_TARGET="${{ matrix.item.name }}"
+          elif [[ "${{ matrix.item.type }}" == "layer" ]]; then
+            BUILD_PATH="root/layers/${{ matrix.item.name }}"
+            BUILD_TARGET="${{ matrix.item.name }}"
           else
-            echo "Error: Invalid matrix type."
+            echo "Error: Unknown build item type"
             exit 1
           fi
-          
+
           echo "BUILD_PATH=${BUILD_PATH}" >> $GITHUB_ENV
           echo "BUILD_TARGET=${BUILD_TARGET}" >> $GITHUB_ENV
           echo "BUILD_PATH=${BUILD_PATH}" >> $GITHUB_OUTPUT
           echo "BUILD_TARGET=${BUILD_TARGET}" >> $GITHUB_OUTPUT
-          
-          echo "Type: ${{ matrix.type }}"
+
           echo "BUILD_PATH: ${BUILD_PATH}"
           echo "BUILD_TARGET: ${BUILD_TARGET}"
 
-      - name: Zip Lambda Layer Code
+      - name: Check for build target
+        run: |
+          if [[ -z "${{ env.BUILD_TARGET }}" ]]; then
+            echo "No build target detected. Exiting."
+            exit 0
+          fi
+
+      - name: Zip Lambda or Layer Code
         if: ${{ env.APP_ENV == 'ndev' }}
         run: |
           cd ${{ env.BUILD_PATH }}
-          echo ${{ env.BUILD_PATH }}
+          echo "Zipping from $(pwd)"
+
           zip -r ${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip . -x ".*"
+
           if [ ! -f "${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip" ]; then
             echo "Error: Zip file was not created successfully."
             exit 1
           fi
+
       - name: Upload Build Artifacts to S3
         if: ${{ env.APP_ENV == 'ndev' }}
         run: |
           cd ${{ env.BUILD_PATH }}
           pwd
-          # aws s3 cp ${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip s3://${{ vars.ARTIFACTS_BUCKET }}/lambda-builds/${{ env.BUILD_TARGET }}/${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip
+          # aws s3 cp \
+          #   ${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip \
+          #   s3://${{ vars.ARTIFACTS_BUCKET }}/lambda-builds/${{ matrix.item.type }}/${{ env.BUILD_TARGET }}/
+
