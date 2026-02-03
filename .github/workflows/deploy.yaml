@@ -185,8 +185,8 @@ jobs:
       BUILD_TARGET: ${{ steps.set-path.outputs.BUILD_TARGET }}
     environment: ${{ matrix.env }}
     env:
-      IMAGE_TAG: ${{ matrix.image }}
-      APP_ENV: ${{ matrix.env }}
+      IMAGE_TAG: ${{ needs.prepare.outputs.matrix != '' && fromJSON(needs.prepare.outputs.matrix)[0].image || 'latest' }}
+      APP_ENV: ${{ needs.prepare.outputs.matrix != '' && fromJSON(needs.prepare.outputs.matrix)[0].env || 'ndev' }}
       
     steps:
       - name: Checkout
