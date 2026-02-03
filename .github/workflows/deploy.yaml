@@ -238,7 +238,7 @@ jobs:
 
       - name: Check for lambdas or layers to build
         run: |
-          if matrix.lambda == 'None' && matrix.layer == 'None'; then
+          if [[ "${{ matrix.lambda }}" == "None" && "${{ matrix.layer }}" == "None" ]]; then
             echo "No lambdas or layers to build. Exiting."
             exit 0
           fi
@@ -253,7 +253,6 @@ jobs:
             echo "Error: Zip file was not created successfully."
             exit 1
           fi
-          
       - name: Upload Build Artifacts to S3
         if: ${{ env.APP_ENV == 'ndev' }}
         run: |
