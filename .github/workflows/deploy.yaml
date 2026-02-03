@@ -253,6 +253,7 @@ jobs:
             echo "Error: Zip file was not created successfully."
             exit 1
           fi
+          
       - name: Upload Build Artifacts to S3
         if: ${{ env.APP_ENV == 'ndev' }}
         run: |
