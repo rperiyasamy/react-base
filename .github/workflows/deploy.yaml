@@ -240,7 +240,8 @@ jobs:
         if: ${{ env.APP_ENV == 'ndev' }}
         run: |
           cd ${{ env.BUILD_PATH }}
-          zip -r ${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip ./*
+          echo ${{ env.BUILD_PATH }}
+          zip -r ${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip . -x ".*"
           if [ ! -f "${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip" ]; then
             echo "Error: Zip file was not created successfully."
             exit 1
