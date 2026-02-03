@@ -97,54 +97,65 @@ jobs:
           echo "${{ steps.set-matrix.outputs.matrix }}"
 
   find-modified-lambdas:
-    needs: prepare
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
-    runs-on: ubuntu-latest
-    outputs:
-      lambdas: ${{ steps.changed.outputs.lambdas }}
-      layers: ${{ steps.changed.outputs.layers }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  needs: prepare
+  if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+  runs-on: ubuntu-latest
+  outputs:
+    items: ${{ steps.changed.outputs.items }}
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-      - id: changed
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            BASE=origin/${{ github.base_ref }}
-          else
-            BASE=HEAD~1
-          fi
+    - id: changed
+      shell: bash
+      run: |
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          BASE=origin/${{ github.base_ref }}
+        else
+          BASE=HEAD~1
+        fi
 
-          # Get unique first-level folder names from lambda_functions
-          LAMBDAS=$(git diff --name-only $BASE HEAD \
-            | grep '^root/lambda_functions/' \
-            | cut -d/ -f3 \
-            | sort -u)
+        echo "Diff base: $BASE"
 
-          # Get unique first-level folder names from layers
-          LAYERS=$(git diff --name-only $BASE HEAD \
-            | grep '^root/layers/' \
-            | cut -d/ -f3 \
-            | sort -u)
+        # Get unique lambda names
+        LAMBDAS=$(git diff --name-only $BASE HEAD \
+          | grep '^root/lambda_functions/' \
+          | cut -d/ -f3 \
+          | sort -u)
 
-          # Convert to JSON arrays, set to None if empty
-          if [ -z "$LAMBDAS" ]; then
-            LAMBDAS_JSON="None"
-          else
-            LAMBDAS_JSON=$(printf '%s\n' $LAMBDAS | jq -R -s -c 'split("\n")[:-1]')
-          fi
+        # Get unique layer names
+        LAYERS=$(git diff --name-only $BASE HEAD \
+          | grep '^root/layers/' \
+          | cut -d/ -f3 \
+          | sort -u)
 
-          if [ -z "$LAYERS" ]; then
-            LAYERS_JSON="None"
-          else
-            LAYERS_JSON=$(printf '%s\n' $LAYERS | jq -R -s -c 'split("\n")[:-1]')
-          fi
+        ITEMS=()
 
-          echo "Detected lambdas JSON: $LAMBDAS_JSON"
-          echo "Detected layers JSON: $LAYERS_JSON"
-          echo "lambdas=$LAMBDAS_JSON" >> $GITHUB_OUTPUT
-          echo "layers=$LAYERS_JSON" >> $GITHUB_OUTPUT
+        # Build lambda items
+        if [ -n "$LAMBDAS" ]; then
+          while read -r lambda; do
+            ITEMS+=("{\"type\":\"lambda\",\"name\":\"$lambda\"}")
+          done <<< "$LAMBDAS"
+        fi
+
+        # Build layer items
+        if [ -n "$LAYERS" ]; then
+          while read -r layer; do
+            ITEMS+=("{\"type\":\"layer\",\"name\":\"$layer\"}")
+          done <<< "$LAYERS"
+        fi
+
+        # If nothing changed, output empty array
+        if [ ${#ITEMS[@]} -eq 0 ]; then
+          ITEMS_JSON="[]"
+        else
+          ITEMS_JSON=$(printf '[%s]' "$(IFS=,; echo "${ITEMS[*]}")")
+        fi
+
+        echo "Detected build items: $ITEMS_JSON"
+        echo "items=$ITEMS_JSON" >> "$GITHUB_OUTPUT"
+
 
   approval:
     needs: [prepare]
@@ -176,16 +187,9 @@ jobs:
     if: ${{ needs.prepare.outputs.matrix != '' }}
     strategy:
       matrix:
-        item: ${{ 
-          github.event_name == 'workflow_dispatch'
-          && (
-            github.event.inputs.lambda != 'None'
-            && fromJSON(format('[{{"type":"lambda","name":"{0}"}}]', github.event.inputs.lambda))
-            || github.event.inputs.layer != 'None'
-            && fromJSON(format('[{{"type":"layer","name":"{0}"}}]', github.event.inputs.layer))
-          )
-          || fromJSON(needs.find-modified-lambdas.outputs.items)
-        }}
+        # lambda: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.lambda != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.lambda))) || (needs.find-modified-lambdas.outputs.lambdas == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.lambdas)) }}
+        # layer: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.layer != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.layer))) || (needs.find-modified-lambdas.outputs.layers == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.layers)) }}
+        item: ${{ fromJSON(needs.find-modified-lambdas.outputs.items) }}
       fail-fast: false
     runs-on: ubuntu-latest
     outputs:
