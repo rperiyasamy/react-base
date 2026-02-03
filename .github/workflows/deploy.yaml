@@ -182,9 +182,9 @@ jobs:
           github.event_name == 'workflow_dispatch'
           && (
             github.event.inputs.lambda != 'None'
-            && fromJSON(format('[{"type":"lambda","name":"%s"}]', github.event.inputs.lambda))
+            && fromJSON(format('[{{"type":"lambda","name":"{0}"}}]', github.event.inputs.lambda))
             || github.event.inputs.layer != 'None'
-            && fromJSON(format('[{"type":"layer","name":"%s"}]', github.event.inputs.layer))
+            && fromJSON(format('[{{"type":"layer","name":"{0}"}}]', github.event.inputs.layer))
           )
           || fromJSON(needs.find-modified-lambdas.outputs.items)
         }}
