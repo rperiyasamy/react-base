@@ -101,8 +101,7 @@ jobs:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     outputs:
-      lambdas: ${{ steps.changed.outputs.lambdas }}
-      layers: ${{ steps.changed.outputs.layers }}
+      items: ${{ steps.changed.outputs.items }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -127,24 +126,6 @@ jobs:
             | grep '^root/layers/' \
             | cut -d/ -f3 \
             | sort -u)
-
-          # # Convert to JSON arrays, set to None if empty
-          # if [ -z "$LAMBDAS" ]; then
-          #   LAMBDAS_JSON="None"
-          # else
-          #   LAMBDAS_JSON=$(printf '%s\n' $LAMBDAS | jq -R -s -c 'split("\n")[:-1]')
-          # fi
-
-          # if [ -z "$LAYERS" ]; then
-          #   LAYERS_JSON="None"
-          # else
-          #   LAYERS_JSON=$(printf '%s\n' $LAYERS | jq -R -s -c 'split("\n")[:-1]')
-          # fi
-
-          # echo "Detected lambdas JSON: $LAMBDAS_JSON"
-          # echo "Detected layers JSON: $LAYERS_JSON"
-          # echo "lambdas=$LAMBDAS_JSON" >> $GITHUB_OUTPUT
-          # echo "layers=$LAYERS_JSON" >> $GITHUB_OUTPUT
 
           ITEMS=()
 
@@ -171,6 +152,7 @@ jobs:
 
           echo "Detected build items: $ITEMS_JSON"
           echo "items=$ITEMS_JSON" >> "$GITHUB_OUTPUT"
+
 
   approval:
     needs: [prepare]
