@@ -228,6 +228,14 @@ jobs:
             echo "BUILD_PATH=${{ env.BUILD_PATH }}" >> $GITHUB_OUTPUT
             echo "BUILD_TARGET=${{ env.BUILD_TARGET }}" >> $GITHUB_OUTPUT
           fi
+
+      - name: Check for lambdas or layers to build
+        run: |
+          if matrix.lambda == 'None' && matrix.layer == 'None'; then
+            echo "No lambdas or layers to build. Exiting."
+            exit 0
+          fi
+
       - name: Zip Lambda Layer Code
         if: ${{ env.APP_ENV == 'ndev' }}
         run: |
