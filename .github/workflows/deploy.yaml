@@ -102,6 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       lambdas: ${{ steps.changed.outputs.lambdas }}
+      layers: ${{ steps.changed.outputs.layers }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -115,17 +116,35 @@ jobs:
             BASE=HEAD~1
           fi
 
-          # Get unique first-level lambda folder names
+          # Get unique first-level folder names from lambda_functions
           LAMBDAS=$(git diff --name-only $BASE HEAD \
             | grep '^lambda_functions/' \
             | cut -d/ -f2 \
             | sort -u)
 
-          # Convert to JSON array
-          LAMBDAS_JSON=$(printf '%s\n' $LAMBDAS | jq -R -s -c 'split("\n")[:-1]')
+          # Get unique first-level folder names from layers
+          LAYERS=$(git diff --name-only $BASE HEAD \
+            | grep '^layers/' \
+            | cut -d/ -f2 \
+            | sort -u)
+
+          # Convert to JSON arrays, set to None if empty
+          if [ -z "$LAMBDAS" ]; then
+            LAMBDAS_JSON="None"
+          else
+            LAMBDAS_JSON=$(printf '%s\n' $LAMBDAS | jq -R -s -c 'split("\n")[:-1]')
+          fi
+
+          if [ -z "$LAYERS" ]; then
+            LAYERS_JSON="None"
+          else
+            LAYERS_JSON=$(printf '%s\n' $LAYERS | jq -R -s -c 'split("\n")[:-1]')
+          fi
 
           echo "Detected lambdas JSON: $LAMBDAS_JSON"
+          echo "Detected layers JSON: $LAYERS_JSON"
           echo "lambdas=$LAMBDAS_JSON" >> $GITHUB_OUTPUT
+          echo "layers=$LAYERS_JSON" >> $GITHUB_OUTPUT
 
   approval:
     needs: [prepare]
@@ -152,6 +171,7 @@ jobs:
   build:
     needs:
       - prepare
+      - find-modified-lambdas
     if: ${{ needs.prepare.outputs.matrix != '' }}
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
@@ -169,14 +189,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials
-        id: aws-credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT }}:role/github-actions-${{ matrix.env }}
-          role-duration-seconds: 3600
-          output-credentials: true
-          aws-region: ${{ vars.AWS_REGION }}
+      # - name: Configure AWS Credentials
+      #   id: aws-credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT }}:role/github-actions-${{ matrix.env }}
+      #     role-duration-seconds: 3600
+      #     output-credentials: true
+      #     aws-region: ${{ vars.AWS_REGION }}
 
       - name: Determine Build Path
         id: set-path
