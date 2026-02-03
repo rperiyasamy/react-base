@@ -97,64 +97,64 @@ jobs:
           echo "${{ steps.set-matrix.outputs.matrix }}"
 
   find-modified-lambdas:
-  needs: prepare
-  if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
-  runs-on: ubuntu-latest
-  outputs:
-    items: ${{ steps.changed.outputs.items }}
-  steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+    needs: prepare
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    outputs:
+      items: ${{ steps.changed.outputs.items }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - id: changed
-      shell: bash
-      run: |
-        if [ "${{ github.event_name }}" = "pull_request" ]; then
-          BASE=origin/${{ github.base_ref }}
-        else
-          BASE=HEAD~1
-        fi
+      - id: changed
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE=origin/${{ github.base_ref }}
+          else
+            BASE=HEAD~1
+          fi
 
-        echo "Diff base: $BASE"
+          echo "Diff base: $BASE"
 
-        # Get unique lambda names
-        LAMBDAS=$(git diff --name-only $BASE HEAD \
-          | grep '^root/lambda_functions/' \
-          | cut -d/ -f3 \
-          | sort -u)
+          # Get unique lambda names
+          LAMBDAS=$(git diff --name-only $BASE HEAD \
+            | grep '^root/lambda_functions/' \
+            | cut -d/ -f3 \
+            | sort -u)
 
-        # Get unique layer names
-        LAYERS=$(git diff --name-only $BASE HEAD \
-          | grep '^root/layers/' \
-          | cut -d/ -f3 \
-          | sort -u)
+          # Get unique layer names
+          LAYERS=$(git diff --name-only $BASE HEAD \
+            | grep '^root/layers/' \
+            | cut -d/ -f3 \
+            | sort -u)
 
-        ITEMS=()
+          ITEMS=()
 
-        # Build lambda items
-        if [ -n "$LAMBDAS" ]; then
-          while read -r lambda; do
-            ITEMS+=("{\"type\":\"lambda\",\"name\":\"$lambda\"}")
-          done <<< "$LAMBDAS"
-        fi
+          # Build lambda items
+          if [ -n "$LAMBDAS" ]; then
+            while read -r lambda; do
+              ITEMS+=("{\"type\":\"lambda\",\"name\":\"$lambda\"}")
+            done <<< "$LAMBDAS"
+          fi
 
-        # Build layer items
-        if [ -n "$LAYERS" ]; then
-          while read -r layer; do
-            ITEMS+=("{\"type\":\"layer\",\"name\":\"$layer\"}")
-          done <<< "$LAYERS"
-        fi
+          # Build layer items
+          if [ -n "$LAYERS" ]; then
+            while read -r layer; do
+              ITEMS+=("{\"type\":\"layer\",\"name\":\"$layer\"}")
+            done <<< "$LAYERS"
+          fi
 
-        # If nothing changed, output empty array
-        if [ ${#ITEMS[@]} -eq 0 ]; then
-          ITEMS_JSON="[]"
-        else
-          ITEMS_JSON=$(printf '[%s]' "$(IFS=,; echo "${ITEMS[*]}")")
-        fi
+          # If nothing changed, output empty array
+          if [ ${#ITEMS[@]} -eq 0 ]; then
+            ITEMS_JSON="[]"
+          else
+            ITEMS_JSON=$(printf '[%s]' "$(IFS=,; echo "${ITEMS[*]}")")
+          fi
 
-        echo "Detected build items: $ITEMS_JSON"
-        echo "items=$ITEMS_JSON" >> "$GITHUB_OUTPUT"
+          echo "Detected build items: $ITEMS_JSON"
+          echo "items=$ITEMS_JSON" >> "$GITHUB_OUTPUT"
 
 
   approval:
