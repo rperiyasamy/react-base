@@ -101,38 +101,50 @@ jobs:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     outputs:
-      items: ${{ steps.changed.outputs.items }}
+      lambdas: ${{ steps.changed.outputs.lambdas }}
+      layers: ${{ steps.changed.outputs.layers }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - id: changed
-        shell: bash
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             BASE=origin/${{ github.base_ref }}
           else
-            if git rev-parse HEAD~1 >/dev/null 2>&1; then
-              BASE=HEAD~1
-            else
-              BASE=$(git hash-object -t tree /dev/null)
-            fi
+            BASE=HEAD~1
           fi
 
-          echo "Diff base: $BASE"
-
-          # Get unique lambda names
+          # Get unique first-level folder names from lambda_functions
           LAMBDAS=$(git diff --name-only $BASE HEAD \
             | grep '^root/lambda_functions/' \
             | cut -d/ -f3 \
             | sort -u)
 
-          # Get unique layer names
+          # Get unique first-level folder names from layers
           LAYERS=$(git diff --name-only $BASE HEAD \
             | grep '^root/layers/' \
             | cut -d/ -f3 \
             | sort -u)
+
+          # # Convert to JSON arrays, set to None if empty
+          # if [ -z "$LAMBDAS" ]; then
+          #   LAMBDAS_JSON="None"
+          # else
+          #   LAMBDAS_JSON=$(printf '%s\n' $LAMBDAS | jq -R -s -c 'split("\n")[:-1]')
+          # fi
+
+          # if [ -z "$LAYERS" ]; then
+          #   LAYERS_JSON="None"
+          # else
+          #   LAYERS_JSON=$(printf '%s\n' $LAYERS | jq -R -s -c 'split("\n")[:-1]')
+          # fi
+
+          # echo "Detected lambdas JSON: $LAMBDAS_JSON"
+          # echo "Detected layers JSON: $LAYERS_JSON"
+          # echo "lambdas=$LAMBDAS_JSON" >> $GITHUB_OUTPUT
+          # echo "layers=$LAYERS_JSON" >> $GITHUB_OUTPUT
 
           ITEMS=()
 
@@ -159,7 +171,6 @@ jobs:
 
           echo "Detected build items: $ITEMS_JSON"
           echo "items=$ITEMS_JSON" >> "$GITHUB_OUTPUT"
-
 
   approval:
     needs: [prepare]
