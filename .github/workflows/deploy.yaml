@@ -206,6 +206,7 @@ jobs:
         run: |
           # For workflow_dispatch
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "Detected manual trigger via workflow_dispatch."
             if [[ "${{ github.event.inputs.lambda }}" != "None" && "${{ github.event.inputs.layer }}" != "None" ]]; then
               echo "Error: You must select either 'lambda' OR 'layer', not both."
               exit 1
@@ -225,6 +226,7 @@ jobs:
             fi
           # For automated push (detected lambda from matrix)
           else
+            echo "Detected automated trigger via push."
             echo "BUILD_PATH=root/lambda_functions/${{ matrix.lambda }}" >> $GITHUB_ENV
             echo "BUILD_TARGET=${{ matrix.lambda }}" >> $GITHUB_ENV
             echo "BUILD_PATH=${{ env.BUILD_PATH }}" >> $GITHUB_OUTPUT
