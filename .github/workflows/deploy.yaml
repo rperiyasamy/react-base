@@ -148,3 +148,68 @@ jobs:
       - name: Approval Received
         if: ${{ matrix.env == 'prod' }}
         run: echo "Approval for deploying c1-providerservice to ${{ matrix.env }} was received"
+
+  build:
+    needs:
+      - prepare
+    if: ${{ needs.prepare.outputs.matrix != '' }}
+    strategy:
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+      fail-fast: false
+    runs-on: ubuntu-latest
+    outputs:
+      BUILD_PATH: ${{ steps.set-path.outputs.BUILD_PATH }}
+      BUILD_TARGET: ${{ steps.set-path.outputs.BUILD_TARGET }}
+    environment: ${{ matrix.env }}
+    env:
+      IMAGE_TAG: ${{ matrix.image }}
+      APP_ENV: ${{ matrix.env }}
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        id: aws-credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT }}:role/github-actions-${{ matrix.env }}
+          role-duration-seconds: 3600
+          output-credentials: true
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Determine Build Path
+        id: set-path
+        run: |
+          if [[ "${{ github.event.inputs.lambda }}" != "None" && "${{ github.event.inputs.layer }}" != "None" ]]; then
+            echo "Error: You must select either 'lambda' OR 'layer', not both."
+            exit 1
+          elif [[ "${{ github.event.inputs.lambda }}" != "None" ]]; then
+            echo "BUILD_PATH=root/lambda_functions/${{ github.event.inputs.lambda }}" >> $GITHUB_ENV
+            echo "BUILD_TARGET=${{ github.event.inputs.lambda }}" >> $GITHUB_ENV
+            echo "BUILD_PATH=${{ env.BUILD_PATH }}" >> $GITHUB_OUTPUT
+            echo "BUILD_TARGET=${{ env.BUILD_TARGET }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event.inputs.layer }}" != "None" ]]; then
+            echo "BUILD_PATH=root/layers/${{ github.event.inputs.layer }}" >> $GITHUB_ENV
+            echo "BUILD_TARGET=${{ github.event.inputs.layer }}" >> $GITHUB_ENV
+            echo "BUILD_PATH=${{ env.BUILD_PATH }}" >> $GITHUB_OUTPUT
+            echo "BUILD_TARGET=${{ env.BUILD_TARGET }}" >> $GITHUB_OUTPUT
+          else
+            echo "Error: You must select either a 'lambda' or a 'layer' to proceed."
+            exit 1
+          fi
+      - name: Zip Lambda Layer Code
+        if: ${{ env.APP_ENV == 'ndev' }}
+        run: |
+          cd ${{ env.BUILD_PATH }}
+          zip -r ${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip ./*
+          if [ ! -f "${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip" ]; then
+            echo "Error: Zip file was not created successfully."
+            exit 1
+          fi
+      - name: Upload Build Artifacts to S3
+        if: ${{ env.APP_ENV == 'ndev' }}
+        run: |
+          cd ${{ env.BUILD_PATH }}
+          pwd
+          # aws s3 cp ${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip s3://${{ vars.ARTIFACTS_BUCKET }}/lambda-builds/${{ env.BUILD_TARGET }}/${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip
