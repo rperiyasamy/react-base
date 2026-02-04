@@ -391,3 +391,181 @@ jobs:
           #   ${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip \
           #   s3://${{ vars.ARTIFACTS_BUCKET }}/lambda-builds/${{ matrix.item.type }}/${{ env.BUILD_TARGET }}/
 
+  deploy:
+    needs: [prepare, build]
+    if: ${{ needs.prepare.outputs.matrix != '' }}
+    # strategy:
+    #   matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    strategy:
+      matrix:
+        item: ${{ fromJSON(needs.resolve-build-items.outputs.items) }}
+      max-parallel: 1
+      fail-fast: false
+    runs-on: ubuntu-latest
+    environment: ${{ matrix.env }}
+    env:
+      IMAGE_TAG: ${{ needs.prepare.outputs.matrix != '' && fromJSON(needs.prepare.outputs.matrix)[0].image || 'latest' }}
+      APP_ENV: ${{ needs.prepare.outputs.matrix != '' && fromJSON(needs.prepare.outputs.matrix)[0].env || 'ndev' }}
+      # BUILD_TARGET: ${{ needs.prepare.outputs.BUILD_TARGET }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout terragrunt repository
+        uses: actions/checkout@v4
+        with:
+          repository: cardioone/tg-infrastructure
+          token: ${{ secrets.GH_TOKEN }}
+          ref: dev
+          path: tg-infrastructure
+
+      - name: Determine Build Path
+        id: set-path
+        run: |
+          echo "Build item type: ${{ matrix.item.type }}"
+          echo "Build item name: ${{ matrix.item.name }}"
+
+          if [[ "${{ matrix.item.type }}" == "lambda" ]]; then
+            BUILD_PATH="root/lambda_functions/${{ matrix.item.name }}"
+            BUILD_TARGET="${{ matrix.item.name }}"
+          elif [[ "${{ matrix.item.type }}" == "layer" ]]; then
+            BUILD_PATH="root/layers/${{ matrix.item.name }}"
+            BUILD_TARGET="${{ matrix.item.name }}"
+          else
+            echo "Error: Unknown build item type"
+            exit 1
+          fi
+
+          echo "BUILD_PATH=${BUILD_PATH}" >> $GITHUB_ENV
+          echo "BUILD_TARGET=${BUILD_TARGET}" >> $GITHUB_ENV
+          echo "BUILD_PATH=${BUILD_PATH}" >> $GITHUB_OUTPUT
+          echo "BUILD_TARGET=${BUILD_TARGET}" >> $GITHUB_OUTPUT
+
+          echo "BUILD_PATH: ${BUILD_PATH}"
+          echo "BUILD_TARGET: ${BUILD_TARGET}"
+
+      # - name: Configure AWS Credentials
+      #   if: ${{ env.APP_ENV != 'ndev' }}
+      #   id: aws-credentials-to-copy-from-dev
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: arn:aws:iam::${{ vars.AWS_REGISTRY_ACCOUNT }}:role/github-actions-ndev
+      #     role-duration-seconds: 3600
+      #     output-credentials: true
+      #     aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Get latest dev build zip from nDEV S3 
+        if: ${{ matrix.env != 'ndev' }}
+        run: |
+          LATEST_ZIP=$(aws s3 ls s3://${{ vars.REGISTRY_ARTIFACTS_BUCKET }}/lambda-builds/${{ env.BUILD_TARGET }}/ --recursive | grep "${{ env.BUILD_TARGET }}-.*\.zip" | sort | tail -n 1 | awk '{print $4}')
+          
+          if [ -z "$LATEST_ZIP" ]; then
+            echo "Error: No dev build found in S3."
+            exit 1
+          fi
+          
+          mkdir ${{ env.BUILD_TARGET }}
+          echo "Downloading latest dev build: $LATEST_ZIP"
+          # aws s3 cp s3://${{ vars.REGISTRY_ARTIFACTS_BUCKET }}/$LATEST_ZIP ./${{ env.BUILD_TARGET }}/
+          # echo "LATEST_ZIP_BASENAME=$(basename $LATEST_ZIP)" >> $GITHUB_ENV
+
+      # - name: Configure AWS Credentials
+      #   if: ${{ env.APP_ENV != 'ndev' }}
+      #   id: aws-credentials-env
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT }}:role/github-actions-${{ matrix.env }}
+      #     role-duration-seconds: 3600
+      #     output-credentials: true
+      #     aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Upload latest dev build zip to S3 
+        if: ${{ matrix.env != 'ndev' }}
+        run: |
+          echo "Uploading latest dev build: $LATEST_ZIP_BASENAME"
+          # aws s3 cp "./${{ env.BUILD_TARGET }}/${{ env.LATEST_ZIP_BASENAME }}" "s3://${{ vars.ARTIFACTS_BUCKET }}/lambda-builds/${{ env.BUILD_TARGET }}/${{ env.LATEST_ZIP_BASENAME }}"
+          # ls ./${{ env.BUILD_TARGET }}/
+
+      # - name: Configure AWS Credentials
+      #   id: aws-credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT }}:role/github-actions-${{ matrix.env }}
+      #     role-duration-seconds: 3600
+      #     output-credentials: true
+      #     aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Download build artifact from S3
+        if: ${{ env.APP_ENV == 'ndev' }}
+        run: |
+          mkdir ${{ env.BUILD_TARGET }}
+          # aws s3 cp s3://${{ vars.ARTIFACTS_BUCKET }}/lambda-builds/${{ env.BUILD_TARGET }}/${{ env.BUILD_TARGET }}-${{ env.IMAGE_TAG }}.zip ./${{ env.BUILD_TARGET }}/${{ env.BUILD_TARGET }}.zip
+          # echo "LATEST_ZIP_BASENAME=${{ env.BUILD_TARGET }}.zip" >> $GITHUB_ENV
+
+      - name: Copy zip files for layer
+        if: ${{ matrix.item.type == 'layer' }}
+        run: |
+          pwd
+          cp ./${{ env.BUILD_TARGET }}/${{ env.LATEST_ZIP_BASENAME }} tg-infrastructure/live/${{ matrix.env }}/operation/lambda_layer/${{ github.event.inputs.layer }}/${{ env.BUILD_TARGET }}.zip
+          
+      - name: Copy zip files for lambda
+        if: ${{ matrix.item.type != 'lambda' }}
+        run: |
+          pwd
+          cp ./${{ env.BUILD_TARGET }}/${{ env.LATEST_ZIP_BASENAME }} tg-infrastructure/live/${{ matrix.env }}/operation/lambdas/${{ github.event.inputs.lambda }}/${{ env.BUILD_TARGET }}.zip
+          ls -ltrh ./${{ env.BUILD_TARGET }}/
+          ls -ltrh ./tg-infrastructure/live/${{ matrix.env }}/operation/lambdas/${{ github.event.inputs.lambda }}
+
+      # - name: Copy zip files for layer other than config and error layer
+      #   if: ${{ github.event.inputs.layer != 'config_and_error_layer' && github.event.inputs.lambda == 'None' }}
+      #   run: |
+      #     pwd
+      #     ls -ltrh ./root/layers/${{ github.event.inputs.layer }}
+      #     cp -r ./root/layers/${{ github.event.inputs.layer }}/ tg-infrastructure/live/${{ matrix.env }}/operation/lambda_layer/${{ github.event.inputs.layer }}/
+      #     ls -ltrh tg-infrastructure/live/${{ matrix.env }}/operation/lambda_layer/${{ github.event.inputs.layer }}/
+            
+      - name: Run Terragrunt for Layers
+        if: ${{ matrix.item.type == 'layer' }}
+        uses: gruntwork-io/terragrunt-action@v2
+        env:
+          EC_API_KEY: ${{ secrets.EC_API_KEY }}
+          INPUT_PRE_EXEC_0: |
+            git config --global url."https://oauth2:${{ secrets.GH_TOKEN }}@github.com".insteadOf ssh://git@github.com
+            sudo apt update -y && sudo apt install -y python3
+            echo "ECKEY: $EC_API_KEY"
+        with:
+          tf_version: 1.9.8
+          tg_version:  0.59.3
+          tg_dir: tg-infrastructure/live/${{ matrix.env }}/operation/lambda_layer/${{ github.event.inputs.layer }}
+          tg_command: 'run-all apply --terragrunt-non-interactive'
+
+      - name: Run Terragrunt
+        if: ${{ matrix.item.type != 'lambda' }}
+        uses: gruntwork-io/terragrunt-action@v2
+        env:
+          EC_API_KEY: ${{ secrets.EC_API_KEY }}
+          INPUT_PRE_EXEC_0: |
+            git config --global url."https://oauth2:${{ secrets.GH_TOKEN }}@github.com".insteadOf ssh://git@github.com
+            sudo apt update -y && sudo apt install -y python3
+            echo "ECKEY: $EC_API_KEY"
+        with:
+          tf_version: 1.9.8
+          tg_version:  0.59.3
+          tg_dir: tg-infrastructure/live/${{ matrix.env }}/operation/lambdas/${{ github.event.inputs.lambda }}
+          tg_command: 'run-all apply --terragrunt-non-interactive'
+
+      # - name: Run Terragrunt for Layers
+      #   if: ${{ github.event.inputs.layer != 'config_and_error_layer' && github.event.inputs.lambda == 'None' }}
+      #   uses: gruntwork-io/terragrunt-action@v2
+      #   env:
+      #     EC_API_KEY: ${{ secrets.EC_API_KEY }}
+      #     INPUT_PRE_EXEC_0: |
+      #       git config --global url."https://oauth2:${{ secrets.GH_TOKEN }}@github.com".insteadOf ssh://git@github.com
+      #       sudo apt update -y && sudo apt install -y python3
+      #       echo "ECKEY: $EC_API_KEY"
+      #   with:
+      #     tf_version: 1.9.8
+      #     tg_version:  0.59.3
+      #     tg_dir: tg-infrastructure/live/${{ matrix.env }}/operation/lambda_layer/${{ github.event.inputs.layer }}
+      #     tg_command: 'run-all apply --terragrunt-non-interactive'
