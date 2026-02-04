@@ -98,7 +98,6 @@ jobs:
 
   find-modified-lambdas:
     needs: prepare
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     outputs:
       items: ${{ steps.changed.outputs.items }}
@@ -108,6 +107,7 @@ jobs:
           fetch-depth: 0
 
       - id: changed
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             BASE=origin/${{ github.base_ref }}
