@@ -187,7 +187,7 @@ jobs:
         timeout-minutes: 30
         with:
           secret: ${{ github.TOKEN }}
-          approvers: ${{ vars.APPROVERS }}
+          approvers: rperiyasamy
           minimum-approvals: 1
           issue-title: "Deploying c1-providerservice to ${{ matrix.env }}"
 
@@ -200,7 +200,7 @@ jobs:
       - prepare
       - find-modified-lambdas
       - approval
-    if: ${{ needs.prepare.outputs.matrix != '' }}
+    if: ${{ always() && needs.prepare.outputs.matrix != '' }}
     strategy:
       # matrix:
       #   # lambda: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.lambda != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.lambda))) || (needs.find-modified-lambdas.outputs.lambdas == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.lambdas)) }}
