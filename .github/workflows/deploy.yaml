@@ -209,19 +209,24 @@ jobs:
         run: |
           echo "Resolving build items…"
 
+          ITEMS='[]'
+
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            if [[ "${{ github.event.inputs.lambda }}" != "None" ]]; then
-              ITEMS='[{"type":"lambda","name":"${{ github.event.inputs.lambda }}"}]'
-            elif [[ "${{ github.event.inputs.layer }}" != "None" ]]; then
+            if [[ "${{ github.event.inputs.layer }}" != "None" ]]; then
               ITEMS='[{"type":"layer","name":"${{ github.event.inputs.layer }}"}]'
-            else
-              ITEMS='[]'
+            elif [[ "${{ github.event.inputs.lambda }}" != "None" ]]; then
+              ITEMS='[{"type":"lambda","name":"${{ github.event.inputs.lambda }}"}]'
             fi
           else
-            ITEMS='${{ needs.find-modified-lambdas.outputs.items }}'
+            RAW_ITEMS='${{ needs.find-modified-lambdas.outputs.items }}'
+
+            # Use jq to reorder: layers first, lambdas second
+            ITEMS=$(echo "$RAW_ITEMS" | jq -c '
+              (map(select(.type=="layer")) + map(select(.type=="lambda")))
+            ')
           fi
 
-          echo "Resolved items: $ITEMS"
+          echo "Resolved items (ordered): $ITEMS"
           echo "items=$ITEMS" >> "$GITHUB_OUTPUT"
 
 
@@ -249,6 +254,7 @@ jobs:
         #     fromJSON(needs.find-modified-lambdas.outputs.items)
         #   }}
         item: ${{ fromJSON(needs.resolve-build-items.outputs.items) }}
+      max-parallel: 1
       fail-fast: false
     runs-on: ubuntu-latest
     outputs:
