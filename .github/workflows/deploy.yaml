@@ -207,14 +207,14 @@ jobs:
       #   item: ${{ fromJSON(needs.find-modified-lambdas.outputs.items || '[]') }}
       matrix:
         item: ${{ 
-          github.event_name == 'workflow_dispatch' 
-          && (github.event.inputs.lambda != 'None' 
-            && fromJSON(format('[{"type":"lambda","name":"{0}"}]', github.event.inputs.lambda))
-            || github.event.inputs.layer != 'None' 
-            && fromJSON(format('[{"type":"layer","name":"{0}"}]', github.event.inputs.layer))
-          )
-          || fromJSON(needs.find-modified-lambdas.outputs.items)
-        }}
+            github.event_name == 'workflow_dispatch' 
+            && (github.event.inputs.lambda != 'None' 
+              && fromJSON(format('[{"type":"lambda","name":"{0}"}]', github.event.inputs.lambda))
+              || github.event.inputs.layer != 'None' 
+              && fromJSON(format('[{"type":"layer","name":"{0}"}]', github.event.inputs.layer))
+            )
+            || fromJSON(needs.find-modified-lambdas.outputs.items)
+          }}
       fail-fast: false
     runs-on: ubuntu-latest
     outputs:
