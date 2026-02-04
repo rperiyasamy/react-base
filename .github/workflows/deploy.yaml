@@ -101,8 +101,9 @@ jobs:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     outputs:
-      lambdas: ${{ steps.changed.outputs.lambdas }}
-      layers: ${{ steps.changed.outputs.layers }}
+      # lambdas: ${{ steps.changed.outputs.lambdas }}
+      # layers: ${{ steps.changed.outputs.layers }}
+      items: ${{ steps.changed.outputs.items }}
     steps:
       - uses: actions/checkout@v4
         with:
