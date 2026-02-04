@@ -392,7 +392,7 @@ jobs:
           #   s3://${{ vars.ARTIFACTS_BUCKET }}/lambda-builds/${{ matrix.item.type }}/${{ env.BUILD_TARGET }}/
 
   deploy:
-    needs: [prepare, build]
+    needs: [build, resolve-build-items]
     if: ${{ needs.prepare.outputs.matrix != '' }}
     # strategy:
     #   matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
