@@ -260,7 +260,7 @@ jobs:
     outputs:
       BUILD_PATH: ${{ steps.set-path.outputs.BUILD_PATH }}
       BUILD_TARGET: ${{ steps.set-path.outputs.BUILD_TARGET }}
-    environment: ${{ matrix.env }}
+    environment: ${{ needs.prepare.outputs.matrix != '' && fromJSON(needs.prepare.outputs.matrix)[0].env || 'ndev' }}
     env:
       IMAGE_TAG: ${{ needs.prepare.outputs.matrix != '' && fromJSON(needs.prepare.outputs.matrix)[0].image || 'latest' }}
       APP_ENV: ${{ needs.prepare.outputs.matrix != '' && fromJSON(needs.prepare.outputs.matrix)[0].env || 'ndev' }}
@@ -402,7 +402,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
     runs-on: ubuntu-latest
-    environment: ${{ matrix.env }}
+    environment: ${{ needs.prepare.outputs.matrix != '' && fromJSON(needs.prepare.outputs.matrix)[0].env || 'ndev' }}
     env:
       IMAGE_TAG: ${{ needs.prepare.outputs.matrix != '' && fromJSON(needs.prepare.outputs.matrix)[0].image || 'latest' }}
       APP_ENV: ${{ needs.prepare.outputs.matrix != '' && fromJSON(needs.prepare.outputs.matrix)[0].env || 'ndev' }}
