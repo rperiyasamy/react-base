@@ -201,10 +201,20 @@ jobs:
       - approval
     if: ${{ needs.prepare.outputs.matrix != '' }}
     strategy:
+      # matrix:
+      #   # lambda: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.lambda != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.lambda))) || (needs.find-modified-lambdas.outputs.lambdas == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.lambdas)) }}
+      #   # layer: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.layer != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.layer))) || (needs.find-modified-lambdas.outputs.layers == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.layers)) }}
+      #   item: ${{ fromJSON(needs.find-modified-lambdas.outputs.items || '[]') }}
       matrix:
-        # lambda: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.lambda != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.lambda))) || (needs.find-modified-lambdas.outputs.lambdas == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.lambdas)) }}
-        # layer: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.layer != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.layer))) || (needs.find-modified-lambdas.outputs.layers == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.layers)) }}
-        item: ${{ fromJSON(needs.find-modified-lambdas.outputs.items || '[]') }}
+        item: ${{ 
+          github.event_name == 'workflow_dispatch' 
+          && (github.event.inputs.lambda != 'None' 
+            && fromJSON(format('[{"type":"lambda","name":"{0}"}]', github.event.inputs.lambda))
+            || github.event.inputs.layer != 'None' 
+            && fromJSON(format('[{"type":"layer","name":"{0}"}]', github.event.inputs.layer))
+          )
+          || fromJSON(needs.find-modified-lambdas.outputs.items)
+        }}
       fail-fast: false
     runs-on: ubuntu-latest
     outputs:
