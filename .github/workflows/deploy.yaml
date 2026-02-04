@@ -98,6 +98,7 @@ jobs:
 
   find-modified-lambdas:
     needs: prepare
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     outputs:
       items: ${{ steps.changed.outputs.items }}
@@ -107,7 +108,6 @@ jobs:
           fetch-depth: 0
 
       - id: changed
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             BASE=origin/${{ github.base_ref }}
@@ -183,11 +183,19 @@ jobs:
       - approval
     if: ${{ needs.prepare.outputs.matrix != '' }}
     strategy:
+      # matrix:
+      #   # lambda: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.lambda != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.lambda))) || (needs.find-modified-lambdas.outputs.lambdas == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.lambdas)) }}
+      #   # layer: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.layer != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.layer))) || (needs.find-modified-lambdas.outputs.layers == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.layers)) }}
+      #   item: ${{ fromJSON(needs.find-modified-lambdas.outputs.items || '[]') }}
+      # # fail-fast: false
       matrix:
-        # lambda: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.lambda != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.lambda))) || (needs.find-modified-lambdas.outputs.lambdas == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.lambdas)) }}
-        # layer: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.layer != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.layer))) || (needs.find-modified-lambdas.outputs.layers == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.layers)) }}
-        item: ${{ fromJSON(needs.find-modified-lambdas.outputs.items || '[]') }}
-      # fail-fast: false
+        item: ${{ 
+          github.event_name == 'workflow_dispatch' && (
+            github.event.inputs.lambda != 'None' && fromJSON(format('[{"type":"lambda","name":"{0}"}]', github.event.inputs.lambda))
+            || github.event.inputs.layer != 'None' && fromJSON(format('[{"type":"layer","name":"{0}"}]', github.event.inputs.layer))
+            || fromJSON('[]')
+          ) || (needs.find-modified-lambdas.result == 'skipped' && fromJSON('[]') || fromJSON(needs.find-modified-lambdas.outputs.items || '[]'))
+        }}
     runs-on: ubuntu-latest
     outputs:
       BUILD_PATH: ${{ steps.set-path.outputs.BUILD_PATH }}
