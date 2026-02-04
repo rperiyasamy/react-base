@@ -195,29 +195,59 @@ jobs:
         if: ${{ matrix.env == 'prod' }}
         run: echo "Approval for deploying c1-providerservice to ${{ matrix.env }} was received"
 
-  build:
+  resolve-build-items:
     needs:
       - prepare
       - find-modified-lambdas
+    runs-on: ubuntu-latest
+    if: always() && needs.prepare.outputs.matrix != ''
+    outputs:
+      items: ${{ steps.set-items.outputs.items }}
+    steps:
+      - id: set-items
+        run: |
+          echo "Resolving build items…"
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            if [[ "${{ github.event.inputs.lambda }}" != "None" ]]; then
+              ITEMS='[{"type":"lambda","name":"${{ github.event.inputs.lambda }}"}]'
+            elif [[ "${{ github.event.inputs.layer }}" != "None" ]]; then
+              ITEMS='[{"type":"layer","name":"${{ github.event.inputs.layer }}"}]'
+            else
+              ITEMS='[]'
+            fi
+          else
+            ITEMS='${{ needs.find-modified-lambdas.outputs.items }}'
+          fi
+
+          echo "Resolved items: $ITEMS"
+          echo "items=$ITEMS" >> "$GITHUB_OUTPUT"
+
+
+  build:
+    needs:
+      - prepare
+      - resolve-build-items
       - approval
-    if: ${{ always() && needs.prepare.outputs.matrix != '' }}
+    if: ${{ needs.prepare.outputs.matrix != '' }}
     strategy:
       # matrix:
       #   # lambda: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.lambda != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.lambda))) || (needs.find-modified-lambdas.outputs.lambdas == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.lambdas)) }}
       #   # layer: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.layer != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.layer))) || (needs.find-modified-lambdas.outputs.layers == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.layers)) }}
       #   item: ${{ fromJSON(needs.find-modified-lambdas.outputs.items || '[]') }}
       matrix:
-        item: ${{ 
-            github.event_name == 'workflow_dispatch' &&
-              (
-                github.event.inputs.lambda != 'None' &&
-                fromJSON('[{"type":"lambda","name":"' + github.event.inputs.lambda + '"}]') ||
-                github.event.inputs.layer != 'None' &&
-                fromJSON('[{"type":"layer","name":"' + github.event.inputs.layer + '"}]')
-              )
-            ||
-            fromJSON(needs.find-modified-lambdas.outputs.items)
-          }}
+        # item: ${{ 
+        #     github.event_name == 'workflow_dispatch' &&
+        #       (
+        #         github.event.inputs.lambda != 'None' &&
+        #         fromJSON('[{"type":"lambda","name":"' + github.event.inputs.lambda + '"}]') ||
+        #         github.event.inputs.layer != 'None' &&
+        #         fromJSON('[{"type":"layer","name":"' + github.event.inputs.layer + '"}]')
+        #       )
+        #     ||
+        #     fromJSON(needs.find-modified-lambdas.outputs.items)
+        #   }}
+        item: ${{ fromJSON(needs.resolve-build-items.outputs.items) }}
       fail-fast: false
     runs-on: ubuntu-latest
     outputs:
