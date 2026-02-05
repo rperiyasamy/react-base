@@ -67,25 +67,22 @@ jobs:
         run: |
           # deploy from dev branch to dev
           if [[ ${GITHUB_REF} == 'refs/heads/dev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-            echo 'matrix={"include":[{"env":"ndev","image":"${{env.SHA}}-dev","build":true}]}' >> $GITHUB_OUTPUT
+            echo "matrix={\"include\":[{\"env\":\"ndev\",\"image\":\"${SHA}-dev\",\"build\":true}]}" >> $GITHUB_OUTPUT
           elif [[ ${GITHUB_REF} == 'refs/heads/prod' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-            echo 'matrix={"include":[{"env":"dev","image":"${{env.SHA}}-prod","build":true}]}' >> $GITHUB_OUTPUT
+            echo "matrix={\"include\":[{\"env\":\"dev\",\"image\":\"${SHA}-prod\",\"build\":true}]}" >> $GITHUB_OUTPUT
           elif [[ ${{ github.event_name }} == 'workflow_dispatch' ]]; then
             if [[ "${{ github.event.inputs.environment }}" == 'dev' ]]; then
-              echo 'matrix={"include":[{"env":"ndev","image":"${{env.SHA}}-dev","build":true}]}' >> $GITHUB_OUTPUT
+              echo "matrix={\"include\":[{\"env\":\"ndev\",\"image\":\"${SHA}-dev\",\"build\":true}]}" >> $GITHUB_OUTPUT
             elif [[ "${{ github.event.inputs.environment }}" == 'prod' ]]; then
-              echo 'matrix={"include":[{"env":"dev","image":"${{env.SHA}}-prod","build":false}]}' >> $GITHUB_OUTPUT
+              echo "matrix={\"include\":[{\"env\":\"dev\",\"image\":\"${SHA}-prod\",\"build\":false}]}" >> $GITHUB_OUTPUT
             elif [[ "${{ github.event.inputs.environment }}" == 'nqa' ]]; then
-              echo 'matrix={"include":[{"env":"nqa","image":"${{env.SHA}}-nqa","build":false}]}' >> $GITHUB_OUTPUT
+              echo "matrix={\"include\":[{\"env\":\"nqa\",\"image\":\"${SHA}-nqa\",\"build\":false}]}" >> $GITHUB_OUTPUT
             else
-              echo 'matrix={"include":[{"env":"${environment}","image":"latest"}]}' >> $GITHUB_OUTPUT
+              echo "matrix={\"include\":[{\"env\":\"${environment}\",\"image\":\"latest\"}]}" >> $GITHUB_OUTPUT
             fi
           else
-            echo 'matrix=' >> $GITHUB_OUTPUT
+            echo "matrix=" >> $GITHUB_OUTPUT
           fi
-      - name: Echo Matrix
-        run: |
-          echo "${{ steps.set-matrix.outputs.matrix }}"
       - name: Echo Matrix
         run: |
           echo "${{ steps.set-matrix.outputs.matrix }}"
@@ -229,7 +226,8 @@ jobs:
       - prepare
       - resolve-build-items
       # - approval
-    if: ${{ needs.resolve-build-items.outputs.items != '[]' }}
+    # if: ${{ needs.resolve-build-items.outputs.items != '[]' }}
+    if: ${{ fromJSON(needs.resolve-build-items.outputs.items)[0] != null }}
     strategy:
       # matrix:
       #   # lambda: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.lambda != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.lambda))) || (needs.find-modified-lambdas.outputs.lambdas == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.lambdas)) }}
