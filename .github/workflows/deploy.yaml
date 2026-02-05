@@ -199,14 +199,16 @@ jobs:
       - id: set-items
         run: |
           echo "Resolving build items…"
-
+          
           ITEMS='[]'
 
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             if [[ "${{ github.event.inputs.layer }}" != "None" ]]; then
-              ITEMS='[{"type":"layer","name":"${{ github.event.inputs.layer }}"}]'
+              # Use jq to construct JSON safely
+              ITEMS=$(jq -n -c --arg type "layer" --arg name "${{ github.event.inputs.layer }}" '[{$type, $name}]')
             elif [[ "${{ github.event.inputs.lambda }}" != "None" ]]; then
-              ITEMS='[{"type":"lambda","name":"${{ github.event.inputs.lambda }}"}]'
+              # Use jq to construct JSON safely
+              ITEMS=$(jq -n -c --arg type "lambda" --arg name "${{ github.event.inputs.lambda }}" '[{$type, $name}]')
             fi
           else
             RAW_ITEMS='${{ needs.find-modified-lambdas.outputs.items }}'
