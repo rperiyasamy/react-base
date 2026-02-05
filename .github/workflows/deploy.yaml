@@ -222,6 +222,20 @@ jobs:
           echo "Resolved items (ordered): $ITEMS"
           echo "items=$ITEMS" >> "$GITHUB_OUTPUT"
 
+  validation:
+    needs: 
+      - prepare
+      - resolve-build-items
+    if: |
+      always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: print
+        run: |
+          echo "Validation step"
+          echo "resolve-build-items result: ${{ needs.resolve-build-items.result }}"
+          echo "resolve-build-items output: ${{ needs.resolve-build-items.outputs.items }}"
+          echo "Item count: $(echo '${{ needs.resolve-build-items.outputs.items }}' | jq 'length')"
 
   build:
     needs:
@@ -232,7 +246,7 @@ jobs:
     if: |
       always() && 
       needs.resolve-build-items.result == 'success' && 
-      needs.resolve-build-items.outputs.count > 0
+      eeds.resolve-build-items.outputs.items != '[]'
     strategy:
       # matrix:
       #   # lambda: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.lambda != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.lambda))) || (needs.find-modified-lambdas.outputs.lambdas == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.lambdas)) }}
