@@ -65,33 +65,27 @@ jobs:
       - name: Set Matrix
         id: set-matrix
         run: |
-          {
-           # deploy from dev branch to dev
+          # deploy from dev branch to dev
           if [[ ${GITHUB_REF} == 'refs/heads/dev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-            echo "matrix<<EOF"
-            echo "{\"include\":[{\"env\":\"ndev\",\"image\":\"${{env.SHA}}-dev\",\"build\":true}]}"
+            echo 'matrix={"include":[{"env":"ndev","image":"${{env.SHA}}-dev","build":true}]}' >> $GITHUB_OUTPUT
           elif [[ ${GITHUB_REF} == 'refs/heads/prod' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
-            echo "matrix<<EOF"
-            echo "{\"include\":[{\"env\":\"dev\",\"image\":\"${{env.SHA}}-prod\",\"build\":true}]}"
+            echo 'matrix={"include":[{"env":"dev","image":"${{env.SHA}}-prod","build":true}]}' >> $GITHUB_OUTPUT
           elif [[ ${{ github.event_name }} == 'workflow_dispatch' ]]; then
-            echo "matrix<<EOF"
-            echo "{\"include\":["
-              if [[ "${{ github.event.inputs.environment }}" == 'dev' ]]; then
-                echo "{\"env\":\"ndev\",\"image\":\"${{env.SHA}}-dev\",\"build\":true},"
-              elif [[ "${{ github.event.inputs.environment }}" == 'prod' ]]; then
-                echo "{\"env\":\"dev\",\"image\":\"${{env.SHA}}-prod\",\"build\":false},"
-              elif [[ "${{ github.event.inputs.environment }}" == 'nqa' ]]; then
-                echo "{\"env\":\"nqa\",\"image\":\"${{env.SHA}}-nqa\",\"build\":false},"
-              else
-                echo "{\"env\":\"${environment}\",\"image\":\"latest\"},"
-              fi
-            echo "]}"
+            if [[ "${{ github.event.inputs.environment }}" == 'dev' ]]; then
+              echo 'matrix={"include":[{"env":"ndev","image":"${{env.SHA}}-dev","build":true}]}' >> $GITHUB_OUTPUT
+            elif [[ "${{ github.event.inputs.environment }}" == 'prod' ]]; then
+              echo 'matrix={"include":[{"env":"dev","image":"${{env.SHA}}-prod","build":false}]}' >> $GITHUB_OUTPUT
+            elif [[ "${{ github.event.inputs.environment }}" == 'nqa' ]]; then
+              echo 'matrix={"include":[{"env":"nqa","image":"${{env.SHA}}-nqa","build":false}]}' >> $GITHUB_OUTPUT
+            else
+              echo 'matrix={"include":[{"env":"${environment}","image":"latest"}]}' >> $GITHUB_OUTPUT
+            fi
           else
-            echo "matrix<<EOF"
-            echo ""
+            echo 'matrix=' >> $GITHUB_OUTPUT
           fi
-          echo EOF
-          } >> $GITHUB_OUTPUT
+      - name: Echo Matrix
+        run: |
+          echo "${{ steps.set-matrix.outputs.matrix }}"
       - name: Echo Matrix
         run: |
           echo "${{ steps.set-matrix.outputs.matrix }}"
