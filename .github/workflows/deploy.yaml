@@ -232,7 +232,7 @@ jobs:
 
   build:
     needs:
-      # - prepare
+      - prepare
       - resolve-build-items
       # - approval
     if: ${{ needs.prepare.outputs.matrix != '' && needs.resolve-build-items.outputs.items != '[]' }}
