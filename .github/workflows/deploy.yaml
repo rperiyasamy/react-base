@@ -246,7 +246,7 @@ jobs:
     if: |
       always() && 
       needs.resolve-build-items.result == 'success' && 
-      eeds.resolve-build-items.outputs.items != '[]'
+      needs.resolve-build-items.outputs.items != '[]'
     strategy:
       # matrix:
       #   # lambda: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.lambda != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.lambda))) || (needs.find-modified-lambdas.outputs.lambdas == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.lambdas)) }}
