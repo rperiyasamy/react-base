@@ -201,7 +201,7 @@ jobs:
       - approval
       - find-modified-lambdas
     runs-on: ubuntu-latest
-    if: always() && needs.prepare.outputs.matrix != ''
+    if: ${{ !failure() && !cancelled() && needs.prepare.outputs.matrix != '' }}
     outputs:
       items: ${{ steps.set-items.outputs.items }}
     steps:
