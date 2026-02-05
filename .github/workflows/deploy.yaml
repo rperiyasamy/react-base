@@ -229,7 +229,10 @@ jobs:
       - resolve-build-items
       # - approval
     # if: ${{ needs.resolve-build-items.outputs.items != '[]' }}
-    if: ${{ fromJSON(needs.resolve-build-items.outputs.items)[0] != null }}
+    if: |
+      always() && 
+      needs.resolve-build-items.result == 'success' && 
+      needs.resolve-build-items.outputs.count > 0
     strategy:
       # matrix:
       #   # lambda: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.lambda != 'None' && fromJSON(format('[{0}]', toJSON(github.event.inputs.lambda))) || (needs.find-modified-lambdas.outputs.lambdas == 'None' && fromJSON('["None"]') || fromJSON(needs.find-modified-lambdas.outputs.lambdas)) }}
