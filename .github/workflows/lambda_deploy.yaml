@@ -188,6 +188,15 @@ jobs:
 
           echo "Resolved items (ordered): $ITEMS"
           echo "items=$ITEMS" >> "$GITHUB_OUTPUT"
+
+  debug-info:
+    needs: [prepare, resolve-build-items]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Resolved Build Items
+        run: |
+          echo "Resolved build items from previous step:"
+          echo "${{ needs.prepare.outputs.matrix }}"
   
   approval:
     needs: [prepare, resolve-build-items]
