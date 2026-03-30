@@ -192,6 +192,7 @@ jobs:
   debug-info:
     needs: [prepare, resolve-build-items]
     runs-on: ubuntu-latest
+    if: always()
     steps:
       - name: Print Resolved Build Items
         run: |
