@@ -1,4 +1,4 @@
-name: Build and deploy Automation lambdas and layers
+name: Build and deploy lambdas
 
 on:
   push:
