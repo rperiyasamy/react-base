@@ -202,7 +202,7 @@ jobs:
   approval:
     needs: [prepare, resolve-build-items]
     runs-on: ubuntu-latest
-    if: ${{ needs.prepare.outputs.matrix != '' }}
+    if: ${{ always() && needs.prepare.outputs.matrix != '' }}
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
     environment: ${{ matrix.env }} 
@@ -213,7 +213,7 @@ jobs:
         timeout-minutes: 30
         with:
           secret: ${{ github.TOKEN }}
-          approvers: lphilipsc1,rajasekar-c1
+          approvers: rperiyasamy
           minimum-approvals: 1
           issue-title: "Deploying operation lambdas to ${{ matrix.env }}"
 
