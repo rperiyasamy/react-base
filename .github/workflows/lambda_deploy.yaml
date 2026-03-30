@@ -1,0 +1,212 @@
+name: Build and deploy Automation lambdas and layers
+
+on:
+  push:
+    branches:
+      - 'dev'
+      # - 'main'
+
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: 'Environment'
+        required: true
+        default: 'dev'
+        options:
+          - dev
+          - nqa
+          - prod
+      lambda:
+        type: choice
+        description: 'Lambda function (Select only if deploying a Lambda function)'
+        required: false
+        default: 'None'
+        options:
+          - None
+          - patient-create-automation
+          - patient-documents-reports
+          - hl7parser-automation
+          - patient-documentation-automation
+          - patient-search
+          - patient-insurance-automation
+          - patient-upload-document
+          - patient-claim-automation
+          - patient-multiple-automation
+
+      layer:
+        type: choice
+        description: 'Lambda Layer (Select only if deploying a Layer)'
+        required: false
+        default: 'None'
+        options:
+          - None
+          - config_and_error_layer
+          - powertool-layer
+          - request_oauth_layer
+
+env:
+  SERVICE: lambdas
+  
+permissions:
+  contents: read
+  id-token: write
+  issues: write
+  
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Generate image tag
+        run: |
+          echo "SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+      - name: Set Matrix
+        id: set-matrix
+        run: |
+          {
+           # deploy from dev branch to dev
+          if [[ ${GITHUB_REF} == 'refs/heads/dev' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
+            echo "{\"include\":[{\"env\":\"ndev\",\"image\":\"${{env.SHA}}-dev\",\"build\":true}]}"
+          elif [[ ${GITHUB_REF} == 'refs/heads/main' && ${{ github.event_name }} != 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
+            echo "{\"include\":[{\"env\":\"dev\",\"image\":\"${{env.SHA}}-prod\",\"build\":true}]}"
+          elif [[ ${{ github.event_name }} == 'workflow_dispatch' ]]; then
+            echo "matrix<<EOF"
+            echo "{\"include\":["
+              if [[ "${{ github.event.inputs.environment }}" == 'dev' ]]; then
+                echo "{\"env\":\"ndev\",\"image\":\"${{env.SHA}}-dev\",\"build\":true}"
+              elif [[ "${{ github.event.inputs.environment }}" == 'prod' ]]; then
+                echo "{\"env\":\"dev\",\"image\":\"${{env.SHA}}-prod\",\"build\":false}"
+              elif [[ "${{ github.event.inputs.environment }}" == 'nqa' ]]; then
+                echo "{\"env\":\"nqa\",\"image\":\"${{env.SHA}}-nqa\",\"build\":false}"
+              else
+                echo "{\"env\":\"${environment}\",\"image\":\"latest\"},"
+              fi
+            echo "]}"
+          else
+            echo "matrix<<EOF"
+            echo ""
+          fi
+          echo EOF
+          } >> $GITHUB_OUTPUT
+      - name: Echo Matrix
+        run: |
+          echo "${{ steps.set-matrix.outputs.matrix }}"
+
+  find-modified-lambdas:
+    needs: prepare
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    outputs:
+      items: ${{ steps.changed.outputs.items }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: changed
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE=origin/${{ github.base_ref }}
+          else
+            BASE=HEAD~1
+          fi
+
+          # Get unique first-level folder names from lambda_functions
+          LAMBDAS=$(git diff --name-only $BASE HEAD \
+            | grep '^root/lambda_functions/' \
+            | cut -d/ -f3 \
+            | sort -u)
+
+          # Get unique first-level folder names from layers
+          LAYERS=$(git diff --name-only $BASE HEAD \
+            | grep '^root/layers/' \
+            | cut -d/ -f3 \
+            | sort -u)
+
+          ITEMS=()
+
+          # Build lambda items
+          if [ -n "$LAMBDAS" ]; then
+            while read -r lambda; do
+              ITEMS+=("{\"type\":\"lambda\",\"name\":\"$lambda\"}")
+            done <<< "$LAMBDAS"
+          fi
+
+          # Build layer items
+          if [ -n "$LAYERS" ]; then
+            while read -r layer; do
+              ITEMS+=("{\"type\":\"layer\",\"name\":\"$layer\"}")
+            done <<< "$LAYERS"
+          fi
+
+          # If nothing changed, output empty array
+          if [ ${#ITEMS[@]} -eq 0 ]; then
+            ITEMS_JSON="[]"
+          else
+            ITEMS_JSON=$(printf '[%s]' "$(IFS=,; echo "${ITEMS[*]}")")
+          fi
+
+          echo "Detected build items: $ITEMS_JSON"
+          echo "items=$ITEMS_JSON" >> "$GITHUB_OUTPUT"
+
+  resolve-build-items:
+    needs:
+      - prepare
+
+      - find-modified-lambdas
+    runs-on: ubuntu-latest
+    if: ${{ !failure() && !cancelled() && needs.prepare.outputs.matrix != '' }}
+    outputs:
+      items: ${{ steps.set-items.outputs.items }}
+    steps:
+      - id: set-items
+        run: |
+          echo "Resolving build items…"
+          
+          ITEMS='[]'
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            if [[ "${{ github.event.inputs.layer }}" != "None" ]]; then
+              # Use jq to construct JSON safely
+              ITEMS=$(jq -n -c --arg type "layer" --arg name "${{ github.event.inputs.layer }}" '[{$type, $name}]')
+            elif [[ "${{ github.event.inputs.lambda }}" != "None" ]]; then
+              # Use jq to construct JSON safely
+              ITEMS=$(jq -n -c --arg type "lambda" --arg name "${{ github.event.inputs.lambda }}" '[{$type, $name}]')
+            fi
+          else
+            RAW_ITEMS='${{ needs.find-modified-lambdas.outputs.items }}'
+
+            # Use jq to reorder: layers first, lambdas second
+            ITEMS=$(echo "$RAW_ITEMS" | jq -c '
+              (map(select(.type=="layer")) + map(select(.type=="lambda")))
+            ')
+          fi
+
+          echo "Resolved items (ordered): $ITEMS"
+          echo "items=$ITEMS" >> "$GITHUB_OUTPUT"
+  
+  approval:
+    needs: [prepare, resolve-build-items]
+    runs-on: ubuntu-latest
+    if: ${{ needs.prepare.outputs.matrix != '' }}
+    strategy:
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    environment: ${{ matrix.env }} 
+    steps:
+      - name: approve-prod-deployment
+        if: ${{ matrix.env == 'dev' }}
+        uses: trstringer/manual-approval@v1
+        timeout-minutes: 30
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: lphilipsc1,rajasekar-c1
+          minimum-approvals: 1
+          issue-title: "Deploying operation lambdas to ${{ matrix.env }}"
+
+      - name: Approval Received
+        if: ${{ matrix.env == 'dev' }}
+        run: echo "Approval for deploying operation lambdas to ${{ matrix.env }} was received"
