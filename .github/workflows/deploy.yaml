@@ -1,6 +1,6 @@
 name: Build and deploy API-Automation lambdas
 
-# on:
+on:
 #   push:
 #     branches:
 #       - 'dev'
