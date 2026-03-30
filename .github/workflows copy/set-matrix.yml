@@ -1,19 +1,19 @@
 name: Set Deployment Matrix
 
-on:
-  push:
-    branches:
-      - 'dev'
-      - 'main'
+# on:
+#   push:
+#     branches:
+#       - 'dev'
+#       - 'main'
 
-  pull_request:
-    branches:
-      - 'main'
-      - 'dev'
+#   pull_request:
+#     branches:
+#       - 'main'
+#       - 'dev'
 
-  pull_request:
-    branches:
-      - 'main'
+#   pull_request:
+#     branches:
+#       - 'main'
 
   workflow_dispatch:
     inputs:
